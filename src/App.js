@@ -179,12 +179,12 @@ class App extends Component {
                   <div>
                       <NavBar></NavBar>
                       <Switch>
-                          <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
                           <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
                           <Route exact path="/lender/:address" render={() <LenderManageLoan={this.appContext} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/auditor" render={() => <AuditorMain {...this.props} currentState={this.state} functions={functions} />}/>
                       </Switch>
                   </div>
               </Router>
