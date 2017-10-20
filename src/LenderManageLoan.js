@@ -2,18 +2,28 @@ import React, { Component } from 'react'
 
 const Table  = require('./pure-components/table');
 const _ = require('lodash')
+const co = require('co')
+const getLenderManageLoanColumns = (props, state) => {
 
-const getLenderManageLoanColumns = (props) => {
+    const loanAddress = props.match.params.address
+    const loan = _.find(props.currentState.loans, {address: loanAddress})
+
 	return [
     {
         label: 'Mechant Address',
         value: 'address'
     },
     {
-        label: 'Remove Merchant from Whitelist',
-        value: "Remove",
-
-    }
+        label: null,
+        value: () => {
+            return 'Remove Merchant'
+        },
+        action: (merchant) => {
+            co(function*() {
+                yield loan.instance.revokeMerchant({ from: loan.lender, gas:3000000 });
+            })
+        }
+    },
 	]
 }
 
@@ -25,7 +35,6 @@ class LenderManageLoan extends Component {
       super(props)
 
       this.state = {
-          loanInstance: this.props.appContext.loanContract.at(this.props.match.params.address),
           loanAddress: this.props.match.params.address
 
       };
@@ -72,7 +81,7 @@ class LenderManageLoan extends Component {
                 <br/>
                 <button onClick={() => this.killLoan()}>Kill Loan (loan must be in default)</button>
             </div>
-            <Table columns={getLenderManageLoanColumns(this.props)} data={whitelist} />
+            <Table columns={getLenderManageLoanColumns(this.props, this.state)} data={whitelist} />
       </div>
       );
     }
