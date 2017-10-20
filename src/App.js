@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import LoanFactory from '../build/contracts/LoanFactory.json'
 import getWeb3 from './utils/getWeb3'
+import Home from './Home'
+// using ES6 modules
+import { Router, Route, Switch } from 'react-router'
+
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -10,7 +14,6 @@ import './App.css'
 class App extends Component {
   constructor(props) {
     super(props)
-
 
     // Application context - references to things that basically don't change
     this.appContext = {
@@ -66,23 +69,22 @@ class App extends Component {
     })
   }
 
+  changeState(e){
+    // update state
+    console.log(e);
+  }
+
   render() {
+
+    var allFunctions = {
+      changeState: this.changeState
+    };
+
     return (
-      <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
-
-        <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <p>
-              Loan Factory App
-
-              </p>
-            </div>
-          </div>
-        </main>
+      <div>
+        <Router history={Router.hashHistory}>
+          <Route exact path="/" render={() => <Home currentState={this.state} allFunctions={allFunctions} />}/>
+        </Router>
       </div>
     );
   }
