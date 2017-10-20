@@ -1,32 +1,32 @@
 import React, { Component } from 'react'
 
-const Table  = require('./pure-components/Table')
+const Table  = require('./pure-components/table');
 
 const getBorrowerMainColumns = () => {
 	return [
 		{
 			label: 'Loan Address',
 			value: (loan) =>  {
-				const 
+				return loan.address;
 			}
 		},
 		{
 			label: 'Lender Address',
 			value: (loan)=> {
-				const lenderAddress = loan.lender;
+				return loan.lender;
 			}
 		},
 		{
 			label: 'Amount',
 			value: (loan) => {
-				const loanAmount = loan.amonut;
+				return loan.amount;
 
 			}
 		},
 		{
 			label: 'IPFS Link',
 			value: (loan) => {
-				const IPFSHash = loan.IPFSHash
+				return loan.IPFSHash;
 			}
 		}
 	]
