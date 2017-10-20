@@ -32,12 +32,11 @@ const getBorrowerMainColumns = () => {
 }
 
 class BorrowerMain extends Component {
-
   render() {
     return (
-      <div>
-      <p>BorrowerMain Table</p>
-      </div>
+    	<div>
+    		<Table data={this.props.currentState.loans} columns={getBorrowerMainColumns()} />
+    	</div>
     );
   }
 }
