@@ -58,12 +58,10 @@ typings/
 
 # dotenv environment variables file
 .env
-<<<<<<< Updated upstream
 
 # ide files
 .idea
 build_webpack/
-build
 
-=======
->>>>>>> Stashed changes
+
+.DS_Store
