@@ -21,7 +21,7 @@ contract LoanFactory {
         Loan loan = new Loan(msg.sender, borrower, msg.value, IPFShash, auditor, duration, interestRate);
         LogInitiateLoan(msg.sender, borrower, msg.value, auditor, duration, interestRate);
         lenderLoans[msg.sender].push(loan);
-        borrowerLoans[recipient].push(loan);
+        borrowerLoans[borrower].push(loan);
         return loan;
     }
 
