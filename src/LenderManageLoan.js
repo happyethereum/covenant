@@ -4,6 +4,7 @@ const Table  = require('./pure-components/table');
 
 const getLenderManageLoanColumns = () => {
 	return [
+<<<<<<< Updated upstream
     {
         label: 'Mechant Address',
         value: (loan) =>  {
@@ -16,6 +17,20 @@ const getLenderManageLoanColumns = () => {
             return loan.lender;
         }
     }
+=======
+    // {
+    //     label: 'Mechant Address',
+    //     value: (merchant) =>  {
+    //         return loan.address;
+    //     }
+    // },
+    // {
+    //     label: 'Lender Address',
+    //     value: (loan) => {
+    //         return loan.lender;
+    //     }
+    // }
+>>>>>>> Stashed changes
 	]
 }
 
@@ -26,11 +41,10 @@ class LenderManageLoan extends Component {
     constructor(props){
       super(props)
 
+      console.log(this.props)
+
       this.state = {
-          borrower:null,
-          amount:null,
-          IPFShash:null,
-          auditor:null
+          loanInstance: this.props.appContext.loanContract.at(this.props.match.params.address)
       };
     }
 

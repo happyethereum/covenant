@@ -50,8 +50,6 @@ const getLenderMainColumns = (props) => {
 	]
 }
 
-
-
 class LenderMain extends Component {
 
     constructor(props){
@@ -64,7 +62,6 @@ class LenderMain extends Component {
           auditor:'',
           file: null
       };
-
     }
 
     updateBorrower(e){
@@ -98,8 +95,6 @@ class LenderMain extends Component {
         const IPFShash = this.state.IPFShash
         const auditor = this.state.auditor
 
-        console.log(this.state, sender)
-
         this.props.appContext.loanFactoryInstance.initiateLoan(borrower, IPFShash, auditor, {from: sender, value: amount, gas: 3000000})
         .then(result => {
             console.log("initiateLoan successful: ", result)
@@ -113,7 +108,6 @@ class LenderMain extends Component {
     }
 
     addFile(){
-        console.log(this.state)
 
         const filepath = this.state.file.name
         const ipfs = ipfsAPI({host:'ipfs.infura.io', port:'5001', protocol: 'https'});
@@ -146,7 +140,7 @@ class LenderMain extends Component {
 
     render() {
 
-        var loans = this.filterLoans()
+      var loans = this.filterLoans()
 
       return (
         <div>
@@ -164,7 +158,7 @@ class LenderMain extends Component {
             </div>
             {console.log(this.props)}
             <Table columns={getLenderMainColumns(this.props)} data={loans} />
-      </div>
+         </div>
       );
     }
 }
