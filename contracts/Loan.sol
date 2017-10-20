@@ -8,6 +8,17 @@ contract Loan {
     uint balance;
     string IPFShash;
     address auditor;
+    address[] public whitelist;
+    
+    
+    struct WhitelistStruct {
+    bool isApproved;
+    uint index;
+  }
+  
+  mapping(address => WhitelistStruct) whitelistStructs;
+  
+  
     
     enum Status {PENDING,REPAYED,DEFAULT}
     Status status=Status.PENDING;
@@ -28,7 +39,7 @@ contract Loan {
     }
 
     modifier isOnWhitelist(address merchant){
-        require(approvedAddress[merchant] == true);
+        require(whitelistStructs[merchant].isApproved == true);
         _;
     }
 
@@ -37,14 +48,12 @@ contract Loan {
         _;
     }
 
-    mapping(address => bool) approvedAddress;
+    
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogRevokeMerchantFromWhitelist(address merchant);
     event LogPayMerchant(address merchant, uint amount);
     event LogLoanDestroyed(uint amountReturned);
-    
-    
     event LogStatusChange(Status status);
     
 
@@ -66,7 +75,10 @@ contract Loan {
         onlyLender public
         returns(bool success)
     {
-        approvedAddress[merchant] = true;
+        require(whitelistStructs[merchant].isApproved != true);
+        whitelistStructs[merchant].isApproved = true;
+        whitelistStructs[merchant].index=whitelist.length;
+        whitelist.push(merchant);
         LogMerchantAddedToWhitelist(msg.sender, merchant);
         return true;
     }
@@ -105,7 +117,14 @@ contract Loan {
         onlyLender public
         returns(bool success)
     {
-        approvedAddress[merchant] = false;
+        require(whitelistStructs[merchant].isApproved == true);
+        whitelistStructs[merchant].isApproved == false;
+        
+        uint rowToDelete= whitelistStructs[merchant].index;
+        address keyToMove = whitelist[whitelist.length-1];
+        whitelist[rowToDelete] = keyToMove;
+        whitelistStructs[keyToMove].index = rowToDelete; 
+        whitelist.length--;
         LogRevokeMerchantFromWhitelist(merchant);
         return true;
     }
