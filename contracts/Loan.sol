@@ -85,6 +85,7 @@ contract Loan {
         isOnWhitelist(merchant)
         returns(bool success)
     {
+        require(amount<=balance);
         balance -= amount;
         merchant.transfer(amount);
         LogPayMerchant(merchant, amount);
