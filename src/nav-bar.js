@@ -1,8 +1,10 @@
-const ReactRedux = require('react-redux');
-const NavBarLink = require('./nav-bar-link');
+import NavBarLink from './nav-bar-link';
 require('./nav-bar.css');
+const React = require('react');
+import { withRouter } from 'react-router'
 
-const NavBar = ({ location }) => {
+const NavBar = (props) => {
+	const location = props.location.pathname;
 	return (
 		<div>
 		<nav className="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
@@ -12,7 +14,8 @@ const NavBar = ({ location }) => {
 			</button>
 			<div className="collapse navbar-collapse" id="navbarText">
 				<ul className="navbar-nav">
-					<NavBarLink to="/regulator" label="Regulator" currentLocation={location} />
+					<NavBarLink to="/borrower" label="Borrower" currentLocation={location} />
+					<NavBarLink to="/auditor" label="Auditor" currentLocation={location} />
 				</ul>
 			</div>
 		</nav>
@@ -21,9 +24,4 @@ const NavBar = ({ location }) => {
 	);
 };
 
-const mapStateToProps = (state) => {
-	return {
-	};
-};
-
-module.exports = ReactRedux.connect(mapStateToProps)(NavBar);
+export default withRouter(NavBar);
