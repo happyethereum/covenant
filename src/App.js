@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import LoanFactory from '../build/contracts/LoanFactory.json'
 import getWeb3 from './utils/getWeb3'
 import Home from './Home'
+import BorrowerMain from './BorrowerMain'
+import BorrowerLoanDetails from './BorrowerLoanDetails'
+import AuditorMain from './AuditorMain'
 // using ES6 modules
 import {
   BrowserRouter as Router,
@@ -60,16 +63,7 @@ class App extends Component {
       loanFactory.deployed().then((instance) => {
         this.appContext.loanFactoryInstance = instance;
         this.appContext.userAccount = accounts[0];
-        // Stores a given value, 5 by default.
-        //return simpleStorageInstance.set(5, {from: accounts[0]})
       })
-      // .then((result) => {
-      //   // Get the value from the contract to prove it worked.
-      //   return simpleStorageInstance.get.call(accounts[0])
-      // }).then((result) => {
-      //   // Update state with the result.
-      //   return this.setState({ storageValue: result.c[0] })
-      // })
     })
   }
 
@@ -80,7 +74,7 @@ class App extends Component {
 
   render() {
 
-    var allFunctions = {
+    var functions = {
       changeState: this.changeState
     };
 
@@ -88,7 +82,11 @@ class App extends Component {
       <div>
         <Router>
           <Switch>
-            <Route exact path="/" render={() => <Home currentState={this.state} allFunctions={allFunctions} />}/>
+            <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
+            <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
+            <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
+            <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
+
           </Switch>
         </Router>
       </div>
