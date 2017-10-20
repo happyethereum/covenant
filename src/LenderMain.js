@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 
 const Table  = require('./pure-components/table');
+const ipfsAPI = require('ipfs-api');
+const buffer = require('safe-buffer').Buffer
 
 const getLenderMainColumns = () => {
 	return [
@@ -90,12 +92,43 @@ class LenderMain extends Component {
         })
     }
 
+    updateFile(e){
+        this.setState({
+            file: e.target.files[0]
+        })
+    }
+
+    addFile(){
+        const filepath = this.state.file.name
+        const ipfs = window.IpfsApi('ipfs.infura.io', '5001', {protocol: 'https'});
+
+        var fileReader = new FileReader()
+        fileReader.readAsArrayBuffer(this.state.file)
+
+        fileReader.onload = function(){
+          var data = fileReader.result
+          var buffer = Buffer.from(data)
+          var content = []
+          content.push({
+            path: filepath,
+            content: buffer
+          })
+
+          ipfs.files.add(content, (err, res) => {
+              console.log(err, res)
+          })
+        }
+    }
+
     render() {
       return (
         <div>
             <p>LenderMain</p>
             <div>
                 <h4>Create a New Loan</h4>
+                    <input type="file" onChange={(e) => this.updateFile(e)}/>
+                    <button onClick={this.addFile}>Add File to IPFS</button>
+                    <br/>
                     <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
                     <input type="number" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
                     <input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />
