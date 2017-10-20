@@ -156,7 +156,6 @@ class LenderMain extends Component {
                     <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
                     <button onClick={() => this.initiateLoan()}>Initiate Loan</button>
             </div>
-            {console.log(this.props)}
             <Table columns={getLenderMainColumns(this.props)} data={loans} />
          </div>
       );

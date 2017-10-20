@@ -9,17 +9,17 @@ contract Loan {
     string IPFShash;
     address auditor;
     address[] public whitelist;
-    
-    
+
+
     struct WhitelistStruct {
     bool isApproved;
     uint index;
   }
-  
+
   mapping(address => WhitelistStruct) whitelistStructs;
-  
-  
-    
+
+
+
     enum Status {PENDING,REPAYED,DEFAULT}
     Status public status=Status.PENDING;
 
@@ -53,16 +53,16 @@ contract Loan {
         _;
     }
 
-    
+
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogRevokeMerchantFromWhitelist(address merchant);
     event LogPayMerchant(address merchant, uint amount);
     event LogLoanDestroyed(uint amountReturned);
     event LogStatusChange(Status status);
-    
 
-    function Loan (
+
+    function Loan(
                 address _lender,
                 address _borrower,
                 uint amount,
@@ -128,11 +128,11 @@ contract Loan {
     {
         require(whitelistStructs[merchant].isApproved == true);
         whitelistStructs[merchant].isApproved = false;
-        
+
         uint rowToDelete= whitelistStructs[merchant].index;
         address keyToMove = whitelist[whitelist.length-1];
         whitelist[rowToDelete] = keyToMove;
-        whitelistStructs[keyToMove].index = rowToDelete; 
+        whitelistStructs[keyToMove].index = rowToDelete;
         whitelist.length--;
         LogRevokeMerchantFromWhitelist(merchant);
         return true;
@@ -147,7 +147,4 @@ contract Loan {
         LogLoanDestroyed(balance);
         return true;
     }
-    
-    
-
 }
