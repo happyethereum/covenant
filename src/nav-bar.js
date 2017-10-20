@@ -16,6 +16,7 @@ const NavBar = (props) => {
 				<ul className="navbar-nav">
 					<NavBarLink to="/borrower" label="Borrower" currentLocation={location} />
 					<NavBarLink to="/auditor" label="Auditor" currentLocation={location} />
+					<NavBarLink to="/lender" label="Lender" currentLocation={location} />
 				</ul>
 			</div>
 		</nav>
