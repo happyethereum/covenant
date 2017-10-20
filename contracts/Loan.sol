@@ -12,7 +12,7 @@ contract Loan {
     uint duration;
     uint interestRate;
 
-    modifier onlyLoaner(){
+    modifier onlyLender(){
         require(msg.sender == lender);
         _;
     }
@@ -57,7 +57,7 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLoaner
+        onlyLender
         returns(bool success)
     {
         approvedAddress[merchant] = true;
