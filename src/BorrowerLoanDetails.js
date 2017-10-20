@@ -22,6 +22,8 @@ class BorrowerLoanDetails extends Component {
   }
 
   render() {
+    console.log(this.props.match.params.address) // Address of loan - could be index instead
+
     return (
       <div>
         <h2>Loan Details</h2>
@@ -33,8 +35,6 @@ class BorrowerLoanDetails extends Component {
           <input type="number" value={this.state.payMerchantAmount} onChange={(e) => this.onChange(e)}></input>
           <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
         </div>
-
-
       </div>
     );
   }
