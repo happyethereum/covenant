@@ -102,8 +102,6 @@ class App extends Component {
               loan.amount = amount
               loan.IPFShash = IPFShash
               loan.address = address
-              loan.isDefaulted = false
-              loan.isRepayed = false
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -111,8 +109,7 @@ class App extends Component {
                   loans: loans
               })
 
-              this.watchForDefaults(address)
-              this.watchForRepayment(address)
+              this.watchForStatusChange(address)
           }
       })
   }
@@ -126,28 +123,14 @@ class App extends Component {
               return
           } else {
               console.log(result)
-              const isDefaulted = result.args.isDefaulted
+              const status = result.args.status
 
-              var loans = this.state.loans
+              var loans = _.clone(this.state.loans)
               var curLoan = _.find(loans, { address: loanAddress })
-              var loan = loans.slice(loans.address)
-          }
-      })
-  }
-
-  watchForRepayment(loanAddress){
-      const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogLoanRepayed({}, {fromBlock: 0})
-      .watch((err, result) => {
-          if(err) {
-              console.log(err)
-              return
-          } else {
-              console.log(result)
-              const isRepayed = result.args.isRepayed
-
-              var loans = this.state.loans
-              var loan = loans.slice()
+              curLoan.status = status
+              this.setState({
+                  loans: loans
+              })
           }
       })
   }
