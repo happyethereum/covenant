@@ -3,17 +3,27 @@ pragma solidity ^0.4.0;
 contract Loan {
 
     address lender;
-    address recipient;
+    address borrower;
+    uint initialBalance;
     uint balance;
     string IPFShash;
+    uint assets;
+    address auditor;
+    uint duration;
+    uint interestRate;
 
     modifier onlyLoaner(){
         require(msg.sender == lender);
         _;
     }
 
-    modifier onlyRecipient(){
-        require(msg.sender == recipient);
+    modifier onlyBorrower(){
+        require(msg.sender == borrower);
+        _;
+    }
+
+    modifier onlyAuditor(){
+        require(msg.sender == auditor);
         _;
     }
 
@@ -26,12 +36,24 @@ contract Loan {
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogFundsSent(address merchant, uint amount);
+    event LogAssetsSet(uint assets);
 
-    function Loan(address _recipient, string _IPFShash){
-        lender = msg.sender;
-        recipient = _recipient;
-        balance = msg.value;
+    function Loan(
+                address _lender,
+                address _borrower,
+                uint amount,
+                string _IPFShash,
+                address _auditor,
+                uint _duration,
+                uint _interestRate){
+        lender = _lender;
+        borrower = _borrower;
+        balance = amount;
+        initialBalance = msg.value;
         IPFShash = _IPFShash;
+        auditor = _auditor;
+        duration = _duration;
+        interestRate = _interestRate;
     }
 
     function addMerchantToWhitelist(address merchant)
@@ -43,8 +65,17 @@ contract Loan {
         return true;
     }
 
+    function setAssetsValue(uint _assets)
+        onlyAuditor
+        returns(bool success)
+    {
+        assets = _assets;
+        LogAssetsSet(_assets);
+        return true;
+    }
+
     function sendFunds(address merchant, uint amount)
-        onlyRecipient
+        onlyBorrower
         isOnWhitelist(merchant)
         returns(bool success)
     {
