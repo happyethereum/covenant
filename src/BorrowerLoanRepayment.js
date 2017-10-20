@@ -11,4 +11,4 @@ class BorrowerLoanRepayment extends Component {
   }
 }
 
-export default BorrowerLoanDetails
+export default BorrowerLoanRepayment
