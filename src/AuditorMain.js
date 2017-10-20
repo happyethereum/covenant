@@ -1,77 +1,75 @@
 import React, { Component } from 'react'
-
-const Table  = require('./pure-components/table');
-
-var _ = require('lodash')
+import _ from 'lodash'
+import Table from './pure-components/table'
+import LoanStatus from './constants/loan-status'
+import co from 'co';
 
 class AuditorMain extends Component {
 
-  constructor(props){
-    super(props)
+	render() {
+		const curAddress = this.getUserAddress();
+		const loanContracts = _.filter(this.props.currentState.loans, { auditor: curAddress });
+		return (
+			<div>
+				<Table data={loanContracts} columns={this.getTableColumnConfig()}></Table>
+			</div>
+		);
+	}
 
-    this.state = {
-      loans: []
-    };
-  }
+	getUserAddress() {
+		return this.props.currentState.userAddress
+	}
 
-  getAuditorMainColumns(){
-  	return [
-  		{
-  			label: 'Lender',
-  			value: (loan) =>  {
-  				return loan.lender;
-  			}
-  		},
-  		{
-  			label: 'Borrower',
-  			value: (loan)=> {
-  				return loan.borrower;
-  			}
-  		},
-  		{
-  			label: 'Amount',
-  			value: (loan) => {
-  				return loan.amount;
-
-  			}
-  		},
-  		{
-  			label: 'Status',
-  			value: (loan) => {
-  				return loan.status;
-  			}
-  		},
-      {
-        label: 'Default',
-        value: 'Default this',
-        action: () => {
-          console.log('TODO')
-        }
-      },
-      {
-        label: 'Repaid',
-        value: 'Repaid this',
-        action: () => {
-          console.log('TODO')
-        }
-      }
-  	]
-  }
-
-
-  getLoans(){
-    let address = this.props.currentState.userAddress;
-    return _.filter(this.props.currentState.loans, {auditor: address});
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>Audit</h2>
-        <Table data={this.getLoans()} columns={this.getAuditorMainColumns()} />
-      </div>
-    );
-  }
+	getTableColumnConfig() {
+		const self = this;
+		return [
+			{
+				label: 'Loan Address',
+				value: (loan) =>  {
+					return loan.address;
+				}
+			},
+			{
+				label: 'Status',
+				value: (loan) => {
+					const status = loan.status || 0;
+					return LoanStatus[status];
+				}
+			},
+			{
+				label: null,
+				value: () => {
+					return 'Default'
+				},
+				action: (loan) => {
+					co(function*() {
+						const curAddress = self.getUserAddress();
+						yield loan.instance.setLoanInDefault({ from: curAddress, gas:3000000 });
+					})
+				},
+				disabled: (loan) => {
+					const status = loan.status || 0;
+					return status != 0;
+				}
+			},
+			{
+				label: null,
+				value: () => {
+					return 'Set Repaid'
+				},
+				action: (loan) => {
+					co(function*() {
+						const curAddress = self.getUserAddress();
+						yield loan.instance.setLoanRepayed({ from: curAddress, gas:3000000 });
+					})
+				},
+				disabled: (loan) => {
+					const status = loan.status || 0;
+					return status != 0;
+				}
+			}
+		]
+	}
 }
 
 export default AuditorMain

@@ -25,7 +25,12 @@ const Table = ({ columns = [], data = []}) => {
 							console.log(value)
 							const key=`${dataIndex}-${colIndex}`;
 							if (col.action) {
-								return (<td key={key}><a href="#" onClick={() => col.action(datum)}>{value}</a></td>);
+								const disabled = col.disabled ? col.disabled(datum) : false;
+								if (disabled) {
+									return null;
+								} else {
+									return (<td key={key}><a href="#" onClick={() => col.action(datum)}>{value}</a></td>);
+								}
 							} else {
 								return (<td key={key}>{value}</td>);
 							}
@@ -41,12 +46,13 @@ const Table = ({ columns = [], data = []}) => {
 Table.propTypes = {
 	data: PropTypes.array,
 	columns: PropTypes.arrayOf(PropTypes.shape({
-		label: PropTypes.string.isRequired,
+		label: PropTypes.string,
 		value: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.func
 		]).isRequired,
-		action: PropTypes.func
+		action: PropTypes.func,
+		disabled: PropTypes.func
 	}))
 };
 
