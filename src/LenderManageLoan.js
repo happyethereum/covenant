@@ -4,20 +4,6 @@ const Table  = require('./pure-components/table');
 
 const getLenderManageLoanColumns = () => {
 	return [
-<<<<<<< Updated upstream
-    {
-        label: 'Mechant Address',
-        value: (loan) =>  {
-            return loan.address;
-        }
-    },
-    {
-        label: 'Lender Address',
-        value: (loan) => {
-            return loan.lender;
-        }
-    }
-=======
     // {
     //     label: 'Mechant Address',
     //     value: (merchant) =>  {
@@ -30,7 +16,6 @@ const getLenderManageLoanColumns = () => {
     //         return loan.lender;
     //     }
     // }
->>>>>>> Stashed changes
 	]
 }
 
