@@ -187,7 +187,7 @@ class App extends Component {
                               </ChooseAccount>
                               <Switch>
                                   <Route exact path="/lender" render={(props) => <LenderMain {...props} appContext={this.appContext} currentState={this.state} functions={functions} />}/>
-                                  <Route exact path="/lender/:address" render={() => <LenderManageLoan {...this.props} appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/lender/:address" render={(props) => <LenderManageLoan {...props} appContext={this.appContext} currentState={this.state} functions={functions} />}/>
                                   <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
                                   <Route exact path="/borrower" render={(props) =>  <BorrowerMain {...props} currentState={this.state} functions={functions} />}/>
                                   <Route exact path="/lender/:address" render={(props) => <LenderManageLoan {...props} appContext={this.appContext} currentState={this.state} functions={functions} />}/>
