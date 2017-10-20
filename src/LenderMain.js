@@ -46,10 +46,10 @@ class LenderMain extends Component {
       super(props)
 
       this.state = {
-          borrower:null,
-          amount:null,
-          IPFShash:null,
-          auditor:null
+          borrower:'',
+          amount:0,
+          IPFShash:'',
+          auditor:''
       };
     }
 
@@ -97,7 +97,7 @@ class LenderMain extends Component {
             <div>
                 <h4>Create a New Loan</h4>
                     <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
-                    <input type="text" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
+                    <input type="number" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
                     <input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />
                     <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
                     <button onClick={this.initiateLoan()}>Initiate Loan</button>
