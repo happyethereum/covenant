@@ -57,11 +57,12 @@ class App extends Component {
     co(function*() {
 
         let accounts = yield web3.eth.getAccountsPromise();
-	    self.appContext.loanContract = yield self.instantiateContract(accounts);
+	    yield self.instantiateContract(accounts);
 	    self.setState({
             isReady: true,
 		    userAddress: accounts[0],
-		    userAddresses: accounts
+		    userAddresses: accounts,
+            loans: []
         });
 	    self.watchForLoans()
     })

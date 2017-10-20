@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 const Table  = require('./pure-components/table');
 const ipfsAPI = require('ipfs-api');
 const buffer = require('safe-buffer').Buffer
+const _ = require('lodash')
 
 const getLenderMainColumns = () => {
 	return [
@@ -10,6 +11,12 @@ const getLenderMainColumns = () => {
         label: 'Loan Address',
         value: (loan) =>  {
             return loan.address;
+        }
+    },
+    {
+        label: 'Lender Address',
+        value: (loan) => {
+            return loan.lender;
         }
     },
     {
@@ -21,7 +28,7 @@ const getLenderMainColumns = () => {
     {
         label: 'Amount',
         value: (loan) => {
-            return loan.amount;
+            return loan.amount.toString(10);
 
         }
     },
@@ -49,10 +56,12 @@ class LenderMain extends Component {
 
       this.state = {
           borrower:'',
-          amount:0,
+          amount:'',
           IPFShash:'',
-          auditor:''
+          auditor:'',
+          file: null
       };
+
     }
 
     updateBorrower(e){
@@ -80,13 +89,15 @@ class LenderMain extends Component {
     }
 
     initiateLoan(){
-        const sender = this.state.userAddress
+        const sender = this.props.currentState.userAddress
         const borrower = this.state.borrower
         const amount = parseInt(this.state.amount)
         const IPFShash = this.state.IPFShash
         const auditor = this.state.auditor
 
-        this.props.appContext.loanFactoryInstance.initiateLoan(borrower, IPFShash, auditor, {from: sender, value: amount})
+        console.log(this.state, sender)
+
+        this.props.appContext.loanFactoryInstance.initiateLoan(borrower, IPFShash, auditor, {from: sender, value: amount, gas: 3000000})
         .then(result => {
             console.log("initiateLoan successful: ", result)
         })
@@ -99,8 +110,10 @@ class LenderMain extends Component {
     }
 
     addFile(){
+        console.log(this.state)
+
         const filepath = this.state.file.name
-        const ipfs = window.IpfsApi('ipfs.infura.io', '5001', {protocol: 'https'});
+        const ipfs = ipfsAPI({host:'ipfs.infura.io', port:'5001', protocol: 'https'});
 
         var fileReader = new FileReader()
         fileReader.readAsArrayBuffer(this.state.file)
@@ -114,31 +127,40 @@ class LenderMain extends Component {
             content: buffer
           })
 
+          console.log(content)
           ipfs.files.add(content, (err, res) => {
               console.log(err, res)
           })
         }
     }
 
+    filterLoans(){
+        const address = this.props.currentState.userAddress
+        var loans = _.clone(this.props.currentState.loans)
+        loans = _.filter(loans, { lender: address })
+        return loans
+    }
+
     render() {
+
+        var loans = this.filterLoans()
+
       return (
         <div>
             <p>LenderMain</p>
             <div>
                 <h4>Create a New Loan</h4>
                     <input type="file" onChange={(e) => this.updateFile(e)}/>
-                    <button onClick={this.addFile}>Add File to IPFS</button>
+                    <button onClick={this.addFile.bind(this)}>Add File to IPFS</button>
                     <br/>
                     <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
                     <input type="number" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
                     <input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />
                     <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
-                    <button onClick={this.initiateLoan()}>Initiate Loan</button>
+                    <button onClick={() => this.initiateLoan()}>Initiate Loan</button>
             </div>
-            <div>
-                <h4>Add A Merchant to the whitelist</h4>
-
-            </div>
+            {console.log(this.state)}
+            <Table columns={getLenderMainColumns()} data={loans} />
       </div>
       );
     }
