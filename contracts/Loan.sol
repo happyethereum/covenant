@@ -39,6 +39,7 @@ contract Loan {
     mapping(address => bool) approvedAddress;
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
+    event LogRevokeMerchantFromWhitelist(address merchant);
     event LogPayMerchant(address merchant, uint amount);
     event LogLoanInDefault(bool isDefaulted);
     event LogLoanRepayed(bool isRepayed);
@@ -93,6 +94,15 @@ contract Loan {
     {
         isLoanRepayed = true;
         LogLoanRepayed(isLoanRepayed);
+        return true;
+    }
+
+    function revokeMerchant(address merchant)
+        onlyLender
+        returns(bool success)
+    {
+        approvedAddress[merchant] = false;
+        LogRevokeMerchantFromWhitelist(merchant);
         return true;
     }
 
