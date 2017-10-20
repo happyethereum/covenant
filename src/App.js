@@ -84,6 +84,8 @@ class App extends Component {
   }
 
   watchForLoans(){
+
+      const self = this;
       this.appContext.loanFactoryInstance.LogInitiateLoan({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err){
@@ -97,6 +99,7 @@ class App extends Component {
               const amount = result.args.amount
               const IPFShash = result.args.IPFShash
               const address = result.args.loan
+              const instance =  self.appContext.loanContract.at(address)
 
               var loan = {}
               loan.lender = lender
@@ -106,6 +109,7 @@ class App extends Component {
               loan.IPFShash = IPFShash
               loan.address = address
               loan.whitelist = []
+              loan.instance = instance
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -113,15 +117,14 @@ class App extends Component {
                   loans: loans
               })
 
-              this.watchForStatusChange(address)
-              this.watchForWhitelistChange(address)
+              this.watchForStatusChange(loan)
+              this.watchForWhitelistChange(loan)
           }
       })
   }
 
-  watchForStatusChange(loanAddress){
-      const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogStatusChange({}, {fromBlock: 0})
+  watchForStatusChange(loan){
+      loan.instance.LogStatusChange({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err) {
               console.log(err)
@@ -131,7 +134,7 @@ class App extends Component {
               const status = result.args.status
 
               var loans = _.clone(this.state.loans)
-              var curLoan = _.find(loans, { address: loanAddress })
+              var curLoan = _.find(loans, { address: loan.address })
               curLoan.status = status
               this.setState({
                   loans: loans
@@ -140,9 +143,8 @@ class App extends Component {
       })
   }
 
-  watchForWhitelistChange(loanAddress){
-      const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
+  watchForWhitelistChange(loan){
+      loan.instance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err){
               console.log(err)
@@ -152,7 +154,7 @@ class App extends Component {
               const newApprovedAddress = result.args.merchant
 
               var loans = _.clone(this.state.loans)
-              var curLoan = _.find(loans, { address: loanAddress })
+              var curLoan = _.find(loans, { address: loan.address })
               curLoan.whitelist.push(newApprovedAddress)
               this.setState({
                   loans: loans
