@@ -8,6 +8,7 @@ import BorrowerLoanDetails from './BorrowerLoanDetails'
 import AuditorMain from './AuditorMain'
 import LenderMain from './LenderMain'
 import LenderManageLoan from './LenderManageLoan'
+import ChooseAccount from './pure-components/choose-account-dropdown'
 import co from 'co'
 // using ES6 modules
 import {
@@ -176,15 +177,21 @@ class App extends Component {
                   <div>
                       <NavBar></NavBar>
                       { this.state.isReady && (
-                          <Switch>
-	                          <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
-	                          <Route exact path="/lender/:address" render={() => <LenderManageLoan appContext={this.appContext} currentState={this.state} functions={functions} />}/>
-	                          <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
-	                          <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
-	                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>
-	                          <Route exact path="/auditor" render={() => <AuditorMain {...this.props} currentState={this.state} functions={functions} />}/>}/>
+                          <div>
+                              <ChooseAccount accounts={this.state.userAddresses}
+                                             selectedAccount={this.state.userAddress}
+                                             onSelect={(a) => this.setState({userAddress: a})}>
+                              </ChooseAccount>
+                              <Switch>
+                                  <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/lender/:address" render={() => <LenderManageLoan appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/auditor" render={() => <AuditorMain {...this.props} currentState={this.state} functions={functions} />}/>}/>
 
-                          </Switch>
+                                </Switch>
+                          </div>
                       )}
 
                       { !this.state.isReady && (
