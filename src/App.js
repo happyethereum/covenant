@@ -6,6 +6,7 @@ import Home from './Home'
 import BorrowerMain from './BorrowerMain'
 import BorrowerLoanDetails from './BorrowerLoanDetails'
 import AuditorMain from './AuditorMain'
+import co from 'co'
 // using ES6 modules
 import {
   BrowserRouter as Router,
@@ -21,6 +22,7 @@ import './css/pure-min.css'
 import './App.css'
 import NavBar from './nav-bar'
 
+const web3 = getWeb3();
 const contract = require('truffle-contract')
 
 class App extends Component {
@@ -38,6 +40,7 @@ class App extends Component {
         userAddress: null,
         userAddresses: null,
         loans: [],
+        isReady: false
     };
 
   }
@@ -46,39 +49,34 @@ class App extends Component {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
 
-    getWeb3
-    .then(results => {
+      this.appContext.web3 = web3;
+      const self = this;
+    co(function*() {
 
-        this.appContext.web3 = results.web3;
-
-      // Instantiate contract once web3 provided.
-      this.instantiateContract()
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
+        let accounts = yield web3.eth.getAccountsPromise();
+	    self.appContext.loanContract = yield self.instantiateContract(accounts);
+	    self.setState({
+            isReady: true,
+		    userAddress: accounts[0],
+		    userAddresses: accounts
+        });
+	    self.watchForLoans()
     })
   }
 
-  instantiateContract() {
-    //const contract = require('truffle-contract')
-    const loanFactory = contract(LoanFactory)
-    loanFactory.setProvider(this.appContext.web3.currentProvider)
-    const loanContract = contract(Loan)
-    loanContract.setProvider(this.appContext.web3.currentProvider)
-    this.appContext.loanContract = loanContract
+  instantiateContract(accounts) {
+      const self = this;
+      return co(function*() {
+          // Loan factory
+	      const loanFactory = contract(LoanFactory)
+	      loanFactory.setProvider(self.appContext.web3.currentProvider)
+	      self.appContext.loanFactoryInstance = yield loanFactory.deployed();
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      loanFactory.deployed().then((instance) => {
-        this.appContext.loanFactoryInstance = instance;
-        this.setState({
-            userAddress: accounts[0],
-            userAddresses: accounts
-        })
-
-        this.watchForLoans()
-
+	      // Loan
+	      const loanContract = contract(Loan)
+	      loanContract.setProvider(self.appContext.web3.currentProvider);
+	      self.appContext.loanContract = loanContract;
       })
-    })
   }
 
   watchForLoans(){
@@ -152,13 +150,20 @@ class App extends Component {
               <Router>
                   <div>
                       <NavBar></NavBar>
-                      <Switch>
-                          <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
 
-                      </Switch>
+                      { this.state.isReady && (
+                          <Switch>
+                              <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
+                              <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
+                              <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
+                              <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
+
+                          </Switch>
+                      )}
+
+                      { !this.state.isReady && (
+                          <p> Loading ... </p>
+                      )}
                   </div>
               </Router>
           </div>
