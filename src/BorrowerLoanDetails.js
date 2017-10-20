@@ -13,7 +13,7 @@ class BorrowerLoanDetails extends Component {
 
   getLoan(){
     let address = this.props.match.params.address;
-    return _.find(this.props.currentState.loans, {borrower: address})[0];
+    return _.find(this.props.currentState.loans, {address: address});
   }
 
   onChange(e){
