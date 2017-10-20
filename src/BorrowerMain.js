@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
+import Link from 'react-router-dom'
 
 const Table  = require('./pure-components/table');
 
-const getBorrowerMainColumns = () => {
+const getBorrowerMainColumns = (props) => {
+
 	return [
 		{
 			label: 'Loan Address',
 			value: (loan) =>  {
 				return loan.address;
-			}
+
+			},
+			action: (loan) => {
+	            props.history.push('/borrower/' + loan.address)
+	        }
 		},
 		{
 			label: 'Lender Address',
@@ -19,16 +25,16 @@ const getBorrowerMainColumns = () => {
 		{
 			label: 'Amount',
 			value: (loan) => {
-				return loan.amount;
+				return loan.amount.toString(10) + ' wei';
 
 			}
-		},
-		{
-			label: 'IPFS Link',
-			value: (loan) => {
-				return loan.IPFSHash;
-			}
 		}
+		// {
+		// 	label: 'IPFS Link',
+		// 	value: (loan) => {
+		// 		return loan.IPFSHash;
+		// 	}
+		// }
 	]
 }
 
@@ -36,7 +42,7 @@ class BorrowerMain extends Component {
   render() {
     return (
     	<div>
-    		<Table data={this.props.currentState.loans} columns={getBorrowerMainColumns()} />
+    	   <Table data={this.props.currentState.loans} columns={getBorrowerMainColumns(this.props)} />
     	</div>
     );
   }
