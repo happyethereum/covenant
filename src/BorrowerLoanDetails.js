@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import BorrowerLoanRepayment from './BorrowerLoanRepayment'
 
 class BorrowerLoanDetails extends Component {
   constructor(props){
