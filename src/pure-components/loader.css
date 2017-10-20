@@ -1,0 +1,50 @@
+/* CSS Loader animation */
+.spinner {
+    z-index: 10000;
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-bars {
+    height: 40px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner .spinner-bar {
+    background-color: rgba(255,255,255,.35);
+    width: 5px;
+    height: 20px;
+    margin-left: 6px;
+    display: inline-block;
+
+    animation: spinner-bar-pulse 1.2s infinite ease-in-out;
+}
+
+.spinner .spinner-bar:first-child {
+    margin-left: 0;
+}
+
+.spinner .spinner-bar2 {
+    animation-delay: -1.1s;
+}
+
+.spinner .spinner-bar3 {
+    animation-delay: -1.0s;
+}
+
+@keyframes spinner-bar-pulse {
+    0%, 40%, 100% {
+        height: 20px;
+    }  20% {
+           height: 40px;
+       }
+}
