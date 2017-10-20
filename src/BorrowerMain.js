@@ -36,7 +36,7 @@ class BorrowerMain extends Component {
   render() {
     return (
       <div>
-      <p>BorrowerMain</p>
+      <p>BorrowerMain Table</p>
       </div>
     );
   }
