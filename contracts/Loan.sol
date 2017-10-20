@@ -44,6 +44,7 @@ contract Loan {
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogFundsSent(address merchant, uint amount);
     event LogAssetsSet(uint assets);
+    event LogLoanInDefault(bool isDefaulted);
     event LogLoanRepayed(bool isRepayed);
     event LogLoanDestroyed(uint amountReturned);
 
@@ -88,10 +89,11 @@ contract Loan {
         returns(bool success)
     {
         inDefault = true;
+        LogLoanInDefault(inDefault);
         return true;
     }
 
-    function sendFunds(address merchant, uint amount)
+    function payVendor(address merchant, uint amount)
         onlyBorrower
         isOnWhitelist(merchant)
         returns(bool success)
@@ -110,7 +112,6 @@ contract Loan {
         LogLoanRepayed(isLoanRepayed);
         return true;
     }
-
 
     function kill()
         onlyLender
