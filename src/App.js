@@ -97,7 +97,7 @@ class App extends Component {
               var loans = this.state.loans;
               loans.push(loan)
               this.setState({
-                  laons: loans
+                  loans: loans
               })
           }
       })
