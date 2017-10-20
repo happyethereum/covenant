@@ -11,8 +11,10 @@ contract Loan {
     address auditor;
     uint duration;
     uint interestRate;
+    bool inDefault = false;
+    bool isLoanRepayed = false;
 
-    modifier onlyLoaner(){
+    modifier onlyLender(){
         require(msg.sender == lender);
         _;
     }
@@ -32,11 +34,18 @@ contract Loan {
         _;
     }
 
+    modifier onlyIfInDefault(){
+        require(inDefault == true);
+        _;
+    }
+
     mapping(address => bool) approvedAddress;
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogFundsSent(address merchant, uint amount);
     event LogAssetsSet(uint assets);
+    event LogLoanRepayed(bool isRepayed);
+    event LogLoanDestroyed(uint amountReturned);
 
     function Loan(
                 address _lender,
@@ -57,7 +66,7 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLoaner
+        onlyLender
         returns(bool success)
     {
         approvedAddress[merchant] = true;
@@ -74,6 +83,14 @@ contract Loan {
         return true;
     }
 
+    function setLoanInDefault()
+        onlyAuditor
+        returns(bool success)
+    {
+        inDefault = true;
+        return true;
+    }
+
     function sendFunds(address merchant, uint amount)
         onlyBorrower
         isOnWhitelist(merchant)
@@ -82,6 +99,26 @@ contract Loan {
         balance -= amount;
         merchant.transfer(amount);
         LogFundsSent(merchant, amount);
+        return true;
+    }
+
+    function setLoanRepayed()
+        onlyAuditor
+        returns(bool success)
+    {
+        isLoanRepayed = true;
+        LogLoanRepayed(isLoanRepayed);
+        return true;
+    }
+
+
+    function kill()
+        onlyLender
+        onlyIfInDefault
+        returns (bool success)
+    {
+        selfdestruct(lender);
+        LogLoanDestroyed(balance);
         return true;
     }
 
