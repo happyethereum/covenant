@@ -7,6 +7,7 @@ import BorrowerMain from './BorrowerMain'
 import BorrowerLoanDetails from './BorrowerLoanDetails'
 import AuditorMain from './AuditorMain'
 import LenderMain from './LenderMain'
+import LenderManageLoan from './LenderManageLoan'
 // using ES6 modules
 import {
   BrowserRouter as Router,
@@ -180,7 +181,7 @@ class App extends Component {
                       <NavBar></NavBar>
                       <Switch>
                           <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/lender/:address" render={() <LenderManageLoan={this.appContext} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/lender/:address" render={() => <LenderManageLoan appContext={this.appContext} currentState={this.state} functions={functions} />}/>
                           <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
                           <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
                           <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 const Table  = require('./pure-components/table');
 
-const getLenderMainColumns = () => {
+const getLenderManageLoanColumns = () => {
 	return [
     {
         label: 'Loan Address',
@@ -40,7 +40,7 @@ const getLenderMainColumns = () => {
 
 
 
-class LenderMain extends Component {
+class LenderManageLoan extends Component {
 
     constructor(props){
       super(props)
@@ -54,6 +54,7 @@ class LenderMain extends Component {
     }
 
     render() {
+
       return (
         <div>
             <div>
@@ -65,4 +66,4 @@ class LenderMain extends Component {
     }
 }
 
-export default LenderMain
+export default LenderManageLoan
