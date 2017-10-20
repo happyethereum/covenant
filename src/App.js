@@ -6,6 +6,10 @@ import Home from './Home'
 import BorrowerMain from './BorrowerMain'
 import BorrowerLoanDetails from './BorrowerLoanDetails'
 import AuditorMain from './AuditorMain'
+import LenderMain from './LenderMain'
+import LenderManageLoan from './LenderManageLoan'
+import ChooseAccount from './pure-components/choose-account-dropdown'
+import co from 'co'
 // using ES6 modules
 import {
   BrowserRouter as Router,
@@ -21,6 +25,7 @@ import './css/pure-min.css'
 import './App.css'
 import NavBar from './nav-bar'
 
+const web3 = getWeb3();
 const contract = require('truffle-contract')
 
 class App extends Component {
@@ -38,6 +43,7 @@ class App extends Component {
         userAddress: null,
         userAddresses: null,
         loans: [],
+        isReady: false
     };
 
   }
@@ -46,39 +52,34 @@ class App extends Component {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
 
-    getWeb3
-    .then(results => {
+      this.appContext.web3 = web3;
+      const self = this;
+    co(function*() {
 
-        this.appContext.web3 = results.web3;
-
-      // Instantiate contract once web3 provided.
-      this.instantiateContract()
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
+        let accounts = yield web3.eth.getAccountsPromise();
+	    self.appContext.loanContract = yield self.instantiateContract(accounts);
+	    self.setState({
+            isReady: true,
+		    userAddress: accounts[0],
+		    userAddresses: accounts
+        });
+	    self.watchForLoans()
     })
   }
 
-  instantiateContract() {
-    //const contract = require('truffle-contract')
-    const loanFactory = contract(LoanFactory)
-    loanFactory.setProvider(this.appContext.web3.currentProvider)
-    const loanContract = contract(Loan)
-    loanContract.setProvider(this.appContext.web3.currentProvider)
-    this.appContext.loanContract = loanContract
+  instantiateContract(accounts) {
+      const self = this;
+      return co(function*() {
+          // Loan factory
+	      const loanFactory = contract(LoanFactory)
+	      loanFactory.setProvider(self.appContext.web3.currentProvider)
+	      self.appContext.loanFactoryInstance = yield loanFactory.deployed();
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      loanFactory.deployed().then((instance) => {
-        this.appContext.loanFactoryInstance = instance;
-        this.setState({
-            userAddress: accounts[0],
-            userAddresses: accounts
-        })
-
-        this.watchForLoans()
-
+	      // Loan
+	      const loanContract = contract(Loan)
+	      loanContract.setProvider(self.appContext.web3.currentProvider);
+	      self.appContext.loanContract = loanContract;
       })
-    })
   }
 
   watchForLoans(){
@@ -103,6 +104,7 @@ class App extends Component {
               loan.amount = amount
               loan.IPFShash = IPFShash
               loan.address = address
+              loan.whitelist = []
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -111,13 +113,14 @@ class App extends Component {
               })
 
               this.watchForStatusChange(address)
+              this.watchForWhitelistChange(address)
           }
       })
   }
 
-  watchForDefaults(loanAddress){
+  watchForStatusChange(loanAddress){
       const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogLoanInDefault({}, {fromBlock: 0})
+      loanInstance.LogStatusChange({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err) {
               console.log(err)
@@ -129,6 +132,27 @@ class App extends Component {
               var loans = _.clone(this.state.loans)
               var curLoan = _.find(loans, { address: loanAddress })
               curLoan.status = status
+              this.setState({
+                  loans: loans
+              })
+          }
+      })
+  }
+
+  watchForWhitelistChange(loanAddress){
+      const loanInstance = this.appContext.loanContract.at(loanAddress)
+      loanInstance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
+      .watch((err, result) => {
+          if(err){
+              console.log(err)
+              return
+          } else {
+              console.log(result)
+              const newApprovedAddress = result.args.merchant
+
+              var loans = _.clone(this.state.loans)
+              var curLoan = _.find(loans, { address: loanAddress })
+              curLoan.whitelist.push(newApprovedAddress)
               this.setState({
                   loans: loans
               })
@@ -152,13 +176,27 @@ class App extends Component {
               <Router>
                   <div>
                       <NavBar></NavBar>
-                      <Switch>
-                          <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>
-                          <Route exact path="/auditor" render={() => <AuditorMain {...this.props} currentState={this.state} functions={functions} />}/>
+                      { this.state.isReady && (
+                          <div>
+                              <ChooseAccount accounts={this.state.userAddresses}
+                                             selectedAccount={this.state.userAddress}
+                                             onSelect={(a) => this.setState({userAddress: a})}>
+                              </ChooseAccount>
+                              <Switch>
+                                  <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/lender/:address" render={() => <LenderManageLoan appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/" render={() => <Home {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/borrower" render={() =>  <BorrowerMain {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...this.props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/auditor" render={() => <AuditorMain {...this.props} currentState={this.state} functions={functions} />}/>}/>
 
-                      </Switch>
+                                </Switch>
+                          </div>
+                      )}
+
+                      { !this.state.isReady && (
+                          <p> Loading ... </p>
+                      )}
                   </div>
               </Router>
           </div>

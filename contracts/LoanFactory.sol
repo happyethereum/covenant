@@ -16,7 +16,6 @@ contract LoanFactory {
         payable
         returns (Loan newloan)
     {
-        require(msg.value!=0);
         Loan loan = new Loan(msg.sender, borrower, msg.value, IPFShash, auditor);
         LogInitiateLoan(msg.sender, borrower, msg.value, IPFShash, auditor, loan);
         lenderLoans[msg.sender].push(loan);
