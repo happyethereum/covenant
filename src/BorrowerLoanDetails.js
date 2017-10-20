@@ -23,9 +23,8 @@ class BorrowerLoanDetails extends Component {
   render() {
     return (
       <div>
-        <h2>Loan Details<h2>
+        <h2>Loan Details</h2>
         <BorrowerLoanRepayment />
-        {/* Can move into own file if necessary */}
         <div>
           <select>
             <option value="merchantAddress">merchantAddress placeholder</option>
@@ -33,6 +32,7 @@ class BorrowerLoanDetails extends Component {
           <input type="number" value={this.state.payMerchantAmount} onChange={(e) => this.onChange(e)}></input>
           <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
         </div>
+
 
       </div>
     );
