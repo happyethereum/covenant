@@ -22,6 +22,7 @@ const Table = ({ columns = [], data = []}) => {
 							} else {
 								value = datum[col.value];
 							}
+							console.log(value)
 							const key=`${dataIndex}-${colIndex}`;
 							if (col.action) {
 								return (<td key={key}><a href="#" onClick={() => col.action(datum)}>{value}</a></td>);
