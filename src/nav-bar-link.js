@@ -1,5 +1,6 @@
-const ReactRouter = require('react-router');
-const Link = ReactRouter.Link;
+const RouterDom = require('react-router-dom');
+const Link = RouterDom.Link;
+const React = require('react');
 
 const NavBarLink = ({ to, currentLocation, label }) => {
 	const isActive = currentLocation === to || currentLocation.indexOf(`${to}/`) === 0;

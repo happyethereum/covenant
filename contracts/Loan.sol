@@ -8,8 +8,9 @@ contract Loan {
     uint balance;
     string IPFShash;
     address auditor;
-    bool inDefault = false;
-    bool isLoanRepayed = false;
+    
+    enum Status {PENDING,REPAYED,DEFAULT}
+    Status status=Status.PENDING;
 
     modifier onlyLender(){
         require(msg.sender == lender);
@@ -32,7 +33,7 @@ contract Loan {
     }
 
     modifier onlyIfInDefault(){
-        require(inDefault == true);
+        require(status==Status.DEFAULT);
         _;
     }
 
@@ -41,16 +42,18 @@ contract Loan {
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogRevokeMerchantFromWhitelist(address merchant);
     event LogPayMerchant(address merchant, uint amount);
-    event LogLoanInDefault(bool isDefaulted);
-    event LogLoanRepayed(bool isRepayed);
     event LogLoanDestroyed(uint amountReturned);
+    
+    
+    event LogStatusChange(Status status);
+    
 
     function Loan(
                 address _lender,
                 address _borrower,
                 uint amount,
                 string _IPFShash,
-                address _auditor){
+                address _auditor) public{
         lender = _lender;
         borrower = _borrower;
         balance = amount;
@@ -60,7 +63,7 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender
+        onlyLender public
         returns(bool success)
     {
         approvedAddress[merchant] = true;
@@ -69,16 +72,16 @@ contract Loan {
     }
 
     function setLoanInDefault()
-        onlyAuditor
+        onlyAuditor public
         returns(bool success)
     {
-        inDefault = true;
-        LogLoanInDefault(inDefault);
+        status=Status.DEFAULT;
+        LogStatusChange(status);
         return true;
     }
 
     function payMerchant(address merchant, uint amount)
-        onlyBorrower
+        onlyBorrower public
         isOnWhitelist(merchant)
         returns(bool success)
     {
@@ -89,16 +92,16 @@ contract Loan {
     }
 
     function setLoanRepayed()
-        onlyAuditor
+        onlyAuditor public
         returns(bool success)
     {
-        isLoanRepayed = true;
-        LogLoanRepayed(isLoanRepayed);
+        status=Status.REPAYED;
+        LogStatusChange(status);
         return true;
     }
 
     function revokeMerchant(address merchant)
-        onlyLender
+        onlyLender public
         returns(bool success)
     {
         approvedAddress[merchant] = false;
@@ -108,7 +111,7 @@ contract Loan {
 
     function kill()
         onlyLender
-        onlyIfInDefault
+        onlyIfInDefault public
         returns (bool success)
     {
         selfdestruct(lender);

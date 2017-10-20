@@ -13,11 +13,13 @@ import {
   Switch,
 } from 'react-router-dom'
 
+var _ = require('lodash')
 
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
+import NavBar from './nav-bar'
 
 const contract = require('truffle-contract')
 
@@ -101,8 +103,6 @@ class App extends Component {
               loan.amount = amount
               loan.IPFShash = IPFShash
               loan.address = address
-              loan.isDefaulted = false
-              loan.isRepayed = false
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -110,8 +110,7 @@ class App extends Component {
                   loans: loans
               })
 
-              this.watchForDefaults(address)
-              this.watchForRepayment(address)
+              this.watchForStatusChange(address)
           }
       })
   }
@@ -125,28 +124,14 @@ class App extends Component {
               return
           } else {
               console.log(result)
-              const isDefaulted = result.args.isDefaulted
+              const status = result.args.status
 
-              var loans = this.state.loans
+              var loans = _.clone(this.state.loans)
               var curLoan = _.find(loans, { address: loanAddress })
-              var loan = loans.slice(loans.address)
-          }
-      })
-  }
-
-  watchForRepayment(loanAddress){
-      const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogLoanRepayed({}, {fromBlock: 0})
-      .watch((err, result) => {
-          if(err) {
-              console.log(err)
-              return
-          } else {
-              console.log(result)
-              const isRepayed = result.args.isRepayed
-
-              var loans = this.state.loans
-              var loan = loans.slice()
+              curLoan.status = status
+              this.setState({
+                  loans: loans
+              })
           }
       })
   }
@@ -162,18 +147,21 @@ class App extends Component {
       changeState: this.changeState
     };
 
-    return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
-            <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
+	  return (
+          <div className="container">
+              <Router>
+                  <div>
+                      <NavBar></NavBar>
+                      <Switch>
+                          <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
 
-          </Switch>
-        </Router>
-      </div>
+                      </Switch>
+                  </div>
+              </Router>
+          </div>
     );
   }
 }

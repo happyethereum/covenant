@@ -1,3 +1,5 @@
+build
+
 # Logs
 logs
 *.log
@@ -60,5 +62,6 @@ typings/
 # ide files
 .idea
 build_webpack/
-build
 
+
+.DS_Store
