@@ -97,7 +97,7 @@ class App extends Component {
               var loans = this.state.loans;
               loans.push(loan)
               this.setState({
-                  laons: loans
+                  loans: loans
               })
           }
       })
@@ -122,7 +122,6 @@ class App extends Component {
             <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
             <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
             <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
-
           </Switch>
         </Router>
       </div>
