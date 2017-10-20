@@ -13,6 +13,7 @@ import {
   Switch,
 } from 'react-router-dom'
 
+var _ = require('lodash')
 
 import './css/oswald.css'
 import './css/open-sans.css'
