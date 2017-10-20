@@ -58,7 +58,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "contract-compile": "truffle compile --compile-all",
+    "contract-deploy": "truffle migrate --network development --reset"
   },
   "jest": {
     "collectCoverageFrom": [
