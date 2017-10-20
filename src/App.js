@@ -3,7 +3,11 @@ import LoanFactory from '../build/contracts/LoanFactory.json'
 import getWeb3 from './utils/getWeb3'
 import Home from './Home'
 // using ES6 modules
-import { Router, Route, Switch } from 'react-router'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from 'react-router-dom'
 
 
 import './css/oswald.css'
@@ -82,8 +86,10 @@ class App extends Component {
 
     return (
       <div>
-        <Router history={Router.hashHistory}>
-          <Route exact path="/" render={() => <Home currentState={this.state} allFunctions={allFunctions} />}/>
+        <Router>
+          <Switch>
+            <Route exact path="/" render={() => <Home currentState={this.state} allFunctions={allFunctions} />}/>
+          </Switch>
         </Router>
       </div>
     );
