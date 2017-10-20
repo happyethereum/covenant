@@ -13,7 +13,7 @@ class BorrowerLoanDetails extends Component {
 
   getLoan(){
     let address = this.props.match.params.address;
-    return _.find(this.props.currentState.loans, {borrower: address});
+    return _.find(this.props.currentState.loans, {borrower: address})[0];
   }
 
   onChange(e){
@@ -29,14 +29,13 @@ class BorrowerLoanDetails extends Component {
 
   render() {
     let loan = this.getLoan();
-
     return (
       <div>
         <h2>Loan Details</h2>
         <BorrowerLoanRepayment />
         <div>
           <select>
-            <option value="merchantAddress">merchantAddress placeholder</option>
+            {loan.whitelist.map((item, index) => <option value={item}>item</option>)}
           </select>
           <input type="number" value={this.state.payMerchantAmount} onChange={(e) => this.onChange(e)}></input>
           <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
