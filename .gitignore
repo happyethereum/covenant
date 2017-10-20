@@ -60,4 +60,5 @@ typings/
 # ide files
 .idea
 build_webpack/
+build
 
