@@ -155,7 +155,7 @@ class App extends Component {
 
               var loans = _.clone(this.state.loans)
               var curLoan = _.find(loans, { address: loan.address })
-              curLoan.whitelist.push(newApprovedAddress)
+              curLoan.whitelist.push({address: newApprovedAddress})
               this.setState({
                   loans: loans
               })
