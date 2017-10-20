@@ -21,8 +21,13 @@ contract Loan {
   
     
     enum Status {PENDING,REPAYED,DEFAULT}
-    Status status=Status.PENDING;
+    Status public status=Status.PENDING;
 
+    modifier isActive(){
+        require(status==Status.PENDING);
+        _;
+    }
+    
     modifier onlyLender(){
         require(msg.sender == lender);
         _;
@@ -57,7 +62,7 @@ contract Loan {
     event LogStatusChange(Status status);
     
 
-    function Loan(
+    function Loan (
                 address _lender,
                 address _borrower,
                 uint amount,
@@ -72,7 +77,7 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender public
+        onlyLender isActive 
         returns(bool success)
     {
         require(whitelistStructs[merchant].isApproved != true);
@@ -84,7 +89,8 @@ contract Loan {
     }
 
     function setLoanInDefault()
-        onlyAuditor public
+        onlyAuditor 
+        isActive 
         returns(bool success)
     {
         status=Status.DEFAULT;
@@ -93,8 +99,9 @@ contract Loan {
     }
 
     function payMerchant(address merchant, uint amount)
-        onlyBorrower public
-        isOnWhitelist(merchant)
+        onlyBorrower 
+        isOnWhitelist(merchant) 
+        isActive
         returns(bool success)
     {
         require(amount<=balance);
@@ -105,7 +112,8 @@ contract Loan {
     }
 
     function setLoanRepayed()
-        onlyAuditor public
+        onlyAuditor
+        isActive
         returns(bool success)
     {
         status=Status.REPAYED;
@@ -114,7 +122,8 @@ contract Loan {
     }
 
     function revokeMerchant(address merchant)
-        onlyLender public
+        onlyLender 
+        isActive
         returns(bool success)
     {
         require(whitelistStructs[merchant].isApproved == true);
@@ -131,11 +140,14 @@ contract Loan {
 
     function kill()
         onlyLender
-        onlyIfInDefault public
+        onlyIfInDefault 
         returns (bool success)
     {
         selfdestruct(lender);
         LogLoanDestroyed(balance);
         return true;
     }
+    
+    
 
+}
