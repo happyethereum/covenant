@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Link from 'react-router-dom'
+var _ = require('lodash')
 
 const Table  = require('./pure-components/table');
 
@@ -39,10 +40,16 @@ const getBorrowerMainColumns = (props) => {
 }
 
 class BorrowerMain extends Component {
+
+	getLoans(){
+		let address = this.props.currentState.userAddress;
+		return _.filter(this.props.currentState.loans, {borrower: address});
+	}
+
   render() {
     return (
     	<div>
-    	   <Table data={this.props.currentState.loans} columns={getBorrowerMainColumns(this.props)} />
+    	   <Table data={this.getLoans()} columns={getBorrowerMainColumns(this.props)} />
     	</div>
     );
   }
