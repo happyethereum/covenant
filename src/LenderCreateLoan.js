@@ -2,45 +2,7 @@ import React, { Component } from 'react'
 
 const Table  = require('./pure-components/table');
 
-const getLenderMainColumns = () => {
-	return [
-    {
-        label: 'Loan Address',
-        value: (loan) =>  {
-            return loan.address;
-        }
-    },
-    {
-        label: 'Borrower Address',
-        value: (loan)=> {
-            return loan.borrower;
-        }
-    },
-    {
-        label: 'Amount',
-        value: (loan) => {
-            return loan.amount;
-
-        }
-    },
-    {
-        label: 'IPFS Link',
-        value: (loan) => {
-            return loan.IPFSHash;
-        }
-    },
-    {
-        label: 'Status',
-        value: (loan) => {
-            return loan.status;
-        }
-    }
-	]
-}
-
-
-
-class LenderMain extends Component {
+class LenderCreateLoan extends Component {
 
     constructor(props){
       super(props)
@@ -93,7 +55,7 @@ class LenderMain extends Component {
     render() {
       return (
         <div>
-            <p>LenderMain</p>
+            <p>LenderCreateLoan</p>
             <div>
                 <h4>Create a New Loan</h4>
                     <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
@@ -102,13 +64,9 @@ class LenderMain extends Component {
                     <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
                     <button onClick={this.initiateLoan()}>Initiate Loan</button>
             </div>
-            <div>
-                <h4>Add A Merchant to the whitelist</h4>
-
-            </div>
       </div>
       );
     }
 }
 
-export default LenderMain
+export default LenderCreateLoan

@@ -6,6 +6,7 @@ import Home from './Home'
 import BorrowerMain from './BorrowerMain'
 import BorrowerLoanDetails from './BorrowerLoanDetails'
 import AuditorMain from './AuditorMain'
+import LenderMain from './LenderMain'
 // using ES6 modules
 import {
   BrowserRouter as Router,
@@ -65,10 +66,12 @@ class App extends Component {
     loanFactory.setProvider(this.appContext.web3.currentProvider)
     const loanContract = contract(Loan)
     loanContract.setProvider(this.appContext.web3.currentProvider)
+
     this.appContext.loanContract = loanContract
 
     this.state.web3.eth.getAccounts((error, accounts) => {
       loanFactory.deployed().then((instance) => {
+
         this.appContext.loanFactoryInstance = instance;
         this.setState({
             userAddress: accounts[0],
@@ -103,6 +106,7 @@ class App extends Component {
               loan.amount = amount
               loan.IPFShash = IPFShash
               loan.address = address
+              loan.whitelist = []
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -111,13 +115,14 @@ class App extends Component {
               })
 
               this.watchForStatusChange(address)
+              this.watchForWhitelistChange(address)
           }
       })
   }
 
-  watchForDefaults(loanAddress){
+  watchForStatusChange(loanAddress){
       const loanInstance = this.appContext.loanContract.at(loanAddress)
-      loanInstance.LogLoanInDefault({}, {fromBlock: 0})
+      loanInstance.LogStatusChange({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err) {
               console.log(err)
@@ -129,6 +134,27 @@ class App extends Component {
               var loans = _.clone(this.state.loans)
               var curLoan = _.find(loans, { address: loanAddress })
               curLoan.status = status
+              this.setState({
+                  loans: loans
+              })
+          }
+      })
+  }
+
+  watchForWhitelistChange(loanAddress){
+      const loanInstance = this.appContext.loanContract.at(loanAddress)
+      loanInstance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
+      .watch((err, result) => {
+          if(err){
+              console.log(err)
+              return
+          } else {
+              console.log(result)
+              const newApprovedAddress = result.args.merchant
+
+              var loans = _.clone(this.state.loans)
+              var curLoan = _.find(loans, { address: loanAddress })
+              curLoan.whitelist.push(newApprovedAddress)
               this.setState({
                   loans: loans
               })
@@ -157,7 +183,8 @@ class App extends Component {
                           <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
                           <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
                           <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
-
+                          <Route exact path="/lender" render={() => <LenderMain appContext={this.appContext} currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/lender/:address" render={() <LenderManageLoan={this.appContext} currentState={this.state} functions={functions} />}/>
                       </Switch>
                   </div>
               </Router>
