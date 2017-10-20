@@ -97,6 +97,7 @@ contract Loan {
         isOnWhitelist(merchant)
         returns(bool success)
     {
+        require(amount<=balance);
         balance -= amount;
         merchant.transfer(amount);
         LogPayMerchant(merchant, amount);
@@ -117,7 +118,7 @@ contract Loan {
         returns(bool success)
     {
         require(whitelistStructs[merchant].isApproved == true);
-        whitelistStructs[merchant].isApproved == false;
+        whitelistStructs[merchant].isApproved = false;
         
         uint rowToDelete= whitelistStructs[merchant].index;
         address keyToMove = whitelist[whitelist.length-1];
@@ -138,4 +139,3 @@ contract Loan {
         return true;
     }
 
-}
