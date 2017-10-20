@@ -6,7 +6,7 @@ const getLenderManageLoanColumns = () => {
 	return [
     {
         label: 'Mechant Address',
-        value: (merchant) =>  {
+        value: (loan) =>  {
             return loan.address;
         }
     },
