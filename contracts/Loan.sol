@@ -49,7 +49,7 @@ contract Loan {
         lender = _lender;
         borrower = _borrower;
         balance = amount;
-        initialBalance = msg.value;
+        initialBalance = amount;
         IPFShash = _IPFShash;
         auditor = _auditor;
         duration = _duration;
