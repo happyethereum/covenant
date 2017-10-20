@@ -7,7 +7,7 @@ contract LoanFactory {
     mapping(address => Loan[]) lenderLoans;
     mapping(address => Loan[]) borrowerLoans;
 
-    event LogInitiateLoan(address sender, address recipient, uint amount, string IPFShash, address auditor);
+    event LogInitiateLoan(address sender, address recipient, uint amount, string IPFShash, address auditor, address loan);
 
     function initiateLoan(address borrower,
                           string IPFShash,
@@ -17,7 +17,7 @@ contract LoanFactory {
         returns (Loan newloan)
     {
         Loan loan = new Loan(msg.sender, borrower, msg.value, IPFShash, auditor);
-        LogInitiateLoan(msg.sender, borrower, msg.value, IPFShash, auditor);
+        LogInitiateLoan(msg.sender, borrower, msg.value, IPFShash, auditor, loan);
         lenderLoans[msg.sender].push(loan);
         borrowerLoans[borrower].push(loan);
         return loan;
