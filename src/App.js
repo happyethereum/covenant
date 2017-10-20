@@ -59,7 +59,7 @@ class App extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       loanFactory.deployed().then((instance) => {
         this.appContext.loanFactoryInstance = instance;
-
+        this.appContext.userAccount = accounts[0];
         // Stores a given value, 5 by default.
         //return simpleStorageInstance.set(5, {from: accounts[0]})
       })
