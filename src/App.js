@@ -26,12 +26,13 @@ class App extends Component {
     this.appContext = {
       web3: null,
       loanFactoryInstance: null,
-      userAddress: null
     };
 
     // Application state here
     this.state = {
-
+        userAddress: null,
+        userAddresses: null,
+        loans: [],
     };
 
   }
@@ -42,9 +43,8 @@ class App extends Component {
 
     getWeb3
     .then(results => {
-      this.setState({
-        web3: results.web3
-      })
+
+        this.appContext.web3 = results.web3;
 
       // Instantiate contract once web3 provided.
       this.instantiateContract()
@@ -62,9 +62,45 @@ class App extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       loanFactory.deployed().then((instance) => {
         this.appContext.loanFactoryInstance = instance;
-        this.appContext.userAccount = accounts[0];
+        this.setState({
+            userAddress: accounts[0],
+            userAddresses: accounts
+        })
+
+        this.watchForLoans()
+
       })
     })
+  }
+
+  watchForLoans(){
+      this.appContext.loanFactoryInstance.LogInitiateLoan({}, {fromBlock: 0})
+      .watch((err, result) => {
+          if(err){
+              console.log(err)
+              return;
+          } else {
+              console.log(result)
+              const lender = result.args.sender
+              const borrower = result.args.recipient
+              const auditor = result.args.auditor
+              const amount = result.args.amount
+              const IPFShash = result.args.IPFShash
+
+              var loan = {}
+              loan.lender = lender
+              loan.borrower = borrower
+              loan.auditor = auditor
+              loan.amount = amount
+              loan.IPFShash = IPFShash
+
+              var loans = this.state.loans;
+              loans.push(loan)
+              this.setState({
+                  laons: loans
+              })
+          }
+      })
   }
 
   changeState(e){
