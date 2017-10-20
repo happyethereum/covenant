@@ -20,7 +20,6 @@ const getBorrowerMainColumns = () => {
 			label: 'Amount',
 			value: (loan) => {
 				return loan.amount;
-
 			}
 		},
 		{
