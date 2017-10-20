@@ -19,6 +19,7 @@ import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
+import NavBar from './nav-bar'
 
 const contract = require('truffle-contract')
 
@@ -146,18 +147,21 @@ class App extends Component {
       changeState: this.changeState
     };
 
-    return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
-            <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
+	  return (
+          <div className="container">
+              <Router>
+                  <div>
+                      <NavBar></NavBar>
+                      <Switch>
+                          <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
+                          <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
 
-          </Switch>
-        </Router>
-      </div>
+                      </Switch>
+                  </div>
+              </Router>
+          </div>
     );
   }
 }
