@@ -7,10 +7,7 @@ contract Loan {
     uint initialBalance;
     uint balance;
     string IPFShash;
-    uint assets;
     address auditor;
-    uint duration;
-    uint interestRate;
     bool inDefault = false;
     bool isLoanRepayed = false;
 
@@ -42,8 +39,7 @@ contract Loan {
     mapping(address => bool) approvedAddress;
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
-    event LogFundsSent(address merchant, uint amount);
-    event LogAssetsSet(uint assets);
+    event LogPayMerchant(address merchant, uint amount);
     event LogLoanInDefault(bool isDefaulted);
     event LogLoanRepayed(bool isRepayed);
     event LogLoanDestroyed(uint amountReturned);
@@ -53,17 +49,13 @@ contract Loan {
                 address _borrower,
                 uint amount,
                 string _IPFShash,
-                address _auditor,
-                uint _duration,
-                uint _interestRate){
+                address _auditor){
         lender = _lender;
         borrower = _borrower;
         balance = amount;
         initialBalance = amount;
         IPFShash = _IPFShash;
         auditor = _auditor;
-        duration = _duration;
-        interestRate = _interestRate;
     }
 
     function addMerchantToWhitelist(address merchant)
@@ -72,15 +64,6 @@ contract Loan {
     {
         approvedAddress[merchant] = true;
         LogMerchantAddedToWhitelist(msg.sender, merchant);
-        return true;
-    }
-
-    function setAssetsValue(uint _assets)
-        onlyAuditor
-        returns(bool success)
-    {
-        assets = _assets;
-        LogAssetsSet(_assets);
         return true;
     }
 
@@ -93,14 +76,14 @@ contract Loan {
         return true;
     }
 
-    function payVendor(address merchant, uint amount)
+    function payMerchant(address merchant, uint amount)
         onlyBorrower
         isOnWhitelist(merchant)
         returns(bool success)
     {
         balance -= amount;
         merchant.transfer(amount);
-        LogFundsSent(merchant, amount);
+        LogPayMerchant(merchant, amount);
         return true;
     }
 
