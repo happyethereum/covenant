@@ -150,10 +150,10 @@ class App extends Component {
       <div>
         <Router>
           <Switch>
-            <Route exact path="/" render={() => <Home currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower" render={() => <BorrowerMain currentState={this.state} functions={functions} />}/>
-            <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails currentState={this.state} functions={functions} />}/>
-            <Route exact path="/auditor" render={() => <AuditorMain currentState={this.state} functions={functions} />}/>
+            <Route exact path="/" render={() => <Home {...props} currentState={this.state} functions={functions} />}/>
+            <Route exact path="/borrower" render={() => <BorrowerMain {...props} currentState={this.state} functions={functions} />}/>
+            <Route exact path="/borrower/:address" render={() => <BorrowerLoanDetails {...props} currentState={this.state} functions={functions} />}/>
+            <Route exact path="/auditor" render={() => <AuditorMain {...props} currentState={this.state} functions={functions} />}/>
 
           </Switch>
         </Router>
