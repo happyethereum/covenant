@@ -36,8 +36,18 @@ class LenderManageLoan extends Component {
 
       this.state = {
           loanAddress: this.props.match.params.address,
-          merchant:''
+          merchant:'',
+          loanBalance: ''
       };
+    }
+
+    componentWillMount(){
+      // Currently sync - TODO async
+      let balance =  this.props.appContext.web3.eth.getBalance(this.props.match.params.address);
+      console.log(balance);
+      this.setState({
+        loanBalance: balance.toNumber().toString()
+      })
     }
 
     changeMerchant(e){
@@ -90,6 +100,7 @@ class LenderManageLoan extends Component {
       return (
         <div>
             <div>
+                <h4>Balance: {this.state.loanBalance}</h4>
                 {this.isLoanInDefault() && <button onClick={() => this.killLoan()}>Cancel Loan</button>}
                 <h4>Add A Merchant to the whitelist</h4>
                 <input type="text" onChange={(e) => this.changeMerchant(e)} value={this.state.merchant} placeholder="New merchant address" />
