@@ -22,12 +22,11 @@ const Table = ({ columns = [], data = []}) => {
 							} else {
 								value = datum[col.value];
 							}
-							console.log(value)
 							const key=`${dataIndex}-${colIndex}`;
 							if (col.action) {
 								const disabled = col.disabled ? col.disabled(datum) : false;
 								if (disabled) {
-									return null;
+									return <td key={key}></td>;
 								} else {
 									return (<td key={key}><a href="#" onClick={() => col.action(datum)}>{value}</a></td>);
 								}

@@ -60,7 +60,7 @@ contract Loan {
     event LogPayMerchant(address merchant, uint amount);
     event LogLoanDestroyed(uint amountReturned);
     event LogStatusChange(Status status);
-
+    event LogAmountRepayed(uint amount, uint totalAmountRepayed);
 
     function Loan(
                 address _lender,
@@ -158,8 +158,8 @@ contract Loan {
         onlyIfInDefault
         returns (bool success)
     {
-        selfdestruct(lender);
         LogLoanDestroyed(balance);
+        selfdestruct(lender);
         return true;
     }
 }

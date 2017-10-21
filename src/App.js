@@ -44,7 +44,8 @@ class App extends Component {
         userAddress: null,
         userAddresses: null,
         loans: [],
-        isReady: false
+        isReady: false,
+	    cancelledLoans: {}
     };
 
   }
@@ -93,7 +94,6 @@ class App extends Component {
               console.log(err)
               return;
           } else {
-              console.log(result)
               const lender = result.args.sender
               const borrower = result.args.recipient
               const auditor = result.args.auditor
@@ -101,6 +101,11 @@ class App extends Component {
               const IPFShash = result.args.IPFShash
               const address = result.args.loan
               const instance =  self.appContext.loanContract.at(address)
+
+	          if (this.state.cancelledLoans[address]) {
+              	// loan is cancelled - don't track it
+              	return;
+              }
 
               var loan = {}
               loan.lender = lender
@@ -120,29 +125,57 @@ class App extends Component {
 
               this.watchForStatusChange(loan)
               this.watchForWhitelistChange(loan)
+              this.watchForLoanDestroyed(loan)
           }
       })
   }
 
-  watchForStatusChange(loan){
-      loan.instance.LogStatusChange({}, {fromBlock: 0})
+	watchForLoanDestroyed(loan){
+      loan.instance.LogLoanDestroyed({}, {fromBlock: 0})
       .watch((err, result) => {
           if(err) {
               console.log(err)
               return
           } else {
-              console.log(result)
+              console.log('loan destroyed', result)
               const status = result.args.status
 
-              var loans = _.clone(this.state.loans)
-              var curLoan = _.find(loans, { address: loan.address })
-              curLoan.status = status
-              this.setState({
-                  loans: loans
+	          var loans = _.clone(this.state.loans)
+	          var cancelledLoans = _.clone(this.state.cancelledLoans)
+              var loanIndex = _.findIndex(loans, { address: loan.address })
+	          
+	          // Update state
+	          if (loanIndex >= 0) {
+		          loans.splice(loanIndex, 1);
+              }
+	          cancelledLoans[loan.address] = true;
+	          this.setState({
+                  loans,
+	              cancelledLoans
               })
           }
       })
   }
+
+	watchForStatusChange(loan){
+		loan.instance.LogStatusChange({}, {fromBlock: 0})
+			.watch((err, result) => {
+				if(err) {
+					console.log(err)
+					return
+				} else {
+					console.log('status change', result)
+					const status = result.args.status
+
+					var loans = _.clone(this.state.loans)
+					var curLoan = _.find(loans, { address: loan.address })
+					curLoan.status = status
+					this.setState({
+						loans: loans
+					})
+				}
+			})
+	}
 
   watchForWhitelistChange(loan){
       loan.instance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
@@ -151,7 +184,7 @@ class App extends Component {
               console.log(err)
               return
           } else {
-              console.log(result)
+              console.log('whitelist change', result)
               const newApprovedAddress = result.args.merchant
 
               var loans = _.clone(this.state.loans)
