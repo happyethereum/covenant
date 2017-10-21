@@ -27,7 +27,7 @@ class BorrowerLoanDetails extends Component {
 
   getLoan(){
     let address = this.props.match.params.address;
-    return _.find(this.props.currentState.loans, {address: address});
+    return _.find(this.props.currentState.loans, {address: address}) || {};
   }
 
   onChange(e){
@@ -47,27 +47,41 @@ class BorrowerLoanDetails extends Component {
   render() {
     let loan = this.getLoan();
     return (
-      <div>
-        <h2>Loan Details</h2>
-        <h3>Initial Amount: {loan.amount.toNumber()}</h3>
-        <h3>Current Balance: {this.state.loanBalance}</h3>
-        <BorrowerLoanRepayment />
         <div>
-          <select id="merchant" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
-            <option disabled value="">Select merchant</option>
-            {loan.whitelist.map((item, index) => <option key={index} value={item.address}>{item.address}</option>)}
-          </select>
-          <input id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
-          <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
-        </div>
-        <div>
-          <h3>Payments to Merchants</h3>
-          <ul>
-            {loan.payments.map((item, index) => <li key={index}>
-              To: {item.address} - Paid: {item.amount.toNumber()} wei
-            </li>)}
-          </ul>
-        </div>
+		    {loan && loan.amount && (
+                <div>
+                    <h3>Loan Details</h3>
+                  <p><span className="font-weight-bold">Initial Amount:</span> {loan.amount.toNumber()}</p>
+                  <p><span className="font-weight-bold">Current Balance:</span> {this.state.loanBalance}</p>
+                </div>
+		    )}
+
+            {
+	            loan && loan.payments && loan.payments.length > 0 && (
+                    <div>
+                        <h3>Payments to Merchants</h3>
+                        <ul>
+		                    {loan.payments.map((item, index) => <li key={index}>
+                                To: {item.address} - Paid: {item.amount.toNumber()} wei
+                            </li>)}
+                        </ul>
+                    </div>
+                )
+            }
+
+          {loan && loan.whitelist && loan.whitelist.length && (
+              <div>
+                <h3>Pay Merchant</h3>
+                <div className="form-inline">
+                  <select id="merchant" className="form-control" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
+                    <option disabled value="">Select merchant</option>
+		              {loan.whitelist.map((item, index) => <option key={index} value={item.address}>{item.address}</option>)}
+                  </select>
+                  <input className="form-control" id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
+                  <button className="btn btn-primary form-control" type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
+                </div>
+              </div>
+          )}
       </div>
     );
   }

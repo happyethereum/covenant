@@ -100,17 +100,18 @@ class LenderManageLoan extends Component {
       return (
         <div>
             <div>
-                <h4>Balance: {this.state.loanBalance}</h4>
+                <h3>Loan Details</h3>
+
+                <p><span className="font-weight-bold">Balance:</span> {this.state.loanBalance}</p>
                 {this.isLoanInDefault() && <button onClick={() => this.killLoan()}>Cancel Loan</button>}
                 <h3>Add A Merchant to the Whitelist</h3>
                 <div className="form-inline">
                     <input className="form-control" type="text" onChange={(e) => this.changeMerchant(e)} value={this.state.merchant} placeholder="New merchant address" />
                     <button className="btn btn-primary" onClick={() => this.addNewMerchant()}>Add Merchant</button>
                 </div>
-
-                <br/>
             </div>
-            <Table columns={getLenderManageLoanColumns(this.props, this.state)} data={whitelist} />
+            <h3>Merchants</h3>
+            <Table columns={getLenderManageLoanColumns(this.props, this.state)} data={whitelist} emptyLabel="No Merchants are associated with this Loan" />
       </div>
       );
     }

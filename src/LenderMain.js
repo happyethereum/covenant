@@ -181,7 +181,6 @@ class LenderMain extends Component {
                     </label>
 
                     <button className="btn btn-default" onClick={this.addFile.bind(this)}>Add File to IPFS</button>
-                    <br/>
                     <input type="text" className="form-control" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
                     <input type="number" className="form-control" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
                     {/*}<input type="text" className="form-control" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />*/}
