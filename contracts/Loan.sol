@@ -77,10 +77,11 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender isActive
+        onlyLender 
+        isActive
         returns(bool success)
     {
-        require(whitelistStructs[merchant].isApproved != true);
+        require(!whitelistStructs[merchant].isApproved);
         whitelistStructs[merchant].isApproved = true;
         whitelistStructs[merchant].index=whitelist.length;
         whitelist.push(merchant);
@@ -139,9 +140,10 @@ contract Loan {
     function revokeMerchant(address merchant)
         onlyLender
         isActive
+        isOnWhitelist(merchant)
         returns(bool success)
     {
-        require(whitelistStructs[merchant].isApproved == true);
+        
         whitelistStructs[merchant].isApproved = false;
 
         uint rowToDelete= whitelistStructs[merchant].index;
