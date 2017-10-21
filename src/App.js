@@ -36,6 +36,7 @@ class App extends Component {
     this.appContext = {
       web3: null,
       loanFactoryInstance: null,
+      loanContract: null
     };
 
     // Application state here
@@ -193,7 +194,7 @@ class App extends Component {
                                   <Route exact path="/lender/:address" render={(props) => <LenderManageLoan {...props} appContext={this.appContext} currentState={this.state} functions={functions} />}/>
                                   <Route exact path="/" render={(props) => <Home {...props} currentState={this.state} functions={functions} />}/>
                                   <Route exact path="/borrower" render={(props) =>  <BorrowerMain {...props} currentState={this.state} functions={functions} />}/>
-                                  <Route exact path="/borrower/:address" render={(props) => <BorrowerLoanDetails {...props} currentState={this.state} functions={functions} />}/>
+                                  <Route exact path="/borrower/:address" render={(props) => <BorrowerLoanDetails {...props} currentState={this.state} appContext={this.appContext} functions={functions} />}/>
                                   <Route exact path="/auditor" render={(props) => <AuditorMain {...props} currentState={this.state} functions={functions} />}/>}/>
 
                                 </Switch>

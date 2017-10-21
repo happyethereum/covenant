@@ -7,7 +7,8 @@ class BorrowerLoanDetails extends Component {
     super(props)
 
     this.state = {
-      payMerchantAmount: 0
+      amount: 0,
+      merchant: ''
     };
   }
 
@@ -18,26 +19,37 @@ class BorrowerLoanDetails extends Component {
 
   onChange(e){
     this.setState({
-      payMerchantAmount: e.target.value
-    })
+      [e.target.id]: e.target.value
+    });
   }
 
   payMerchant(){
-    // Pay merchant
-    console.log('pay merchant');
+    console.log(this.props.match.params.address);
+    this.props.appContext.loanContract.at(this.props.match.params.address)
+      .then(instance => {
+        console.log(this.state.merchant);
+        console.log(this.props.currentState.userAddress);
+        console.log(this.state.amount);
+        instance.payMerchant(this.state.merchant, this.state.amount, {from: this.props.currentState.userAddress, gas: 4000000})
+          .then(result => {
+              console.log("payMerchant successful: ", result)
+          });
+      });
   }
 
   render() {
     let loan = this.getLoan();
+    console.log(loan);
     return (
       <div>
-        <h2>Loan Details</h2>
+        <h2>Loan Details - Amount: {loan.Amount}</h2>
+
         <BorrowerLoanRepayment />
         <div>
-          <select>
-            {loan.whitelist.map((item, index) => <option value={item}>item</option>)}
+          <select id="merchant" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
+            {loan.whitelist.map((item, index) => <option key={index} value={item.address}>{item.address}</option>)}
           </select>
-          <input type="number" value={this.state.payMerchantAmount} onChange={(e) => this.onChange(e)}></input>
+          <input id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
           <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
         </div>
       </div>

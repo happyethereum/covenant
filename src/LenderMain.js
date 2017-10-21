@@ -97,11 +97,34 @@ class LenderMain extends Component {
         const IPFShash = this.state.IPFShash
         const auditor = this.state.auditor
 
+		if(!IPFShash || !borrower || !amount || !auditor){
+			alert("Please provide valid input to all fields.")
+			return
+		}
+
         this.props.appContext.loanFactoryInstance.initiateLoan(borrower, IPFShash, auditor, {from: sender, value: amount, gas: 3000000})
         .then(result => {
             console.log("initiateLoan successful: ", result)
         })
+
+		this.setState({
+			borrower: '',
+			amount: '',
+			IPFShash: null,
+			auditor: '',
+			file: null
+		})
     }
+
+	makeid() {
+	  var text = "";
+	  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	  for (var i = 0; i < 46; i++)
+	    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	  return text;
+	}
 
     updateFile(e){
         this.setState({
@@ -111,26 +134,30 @@ class LenderMain extends Component {
 
     addFile(){
 
-        const filepath = this.state.file.name
-        const ipfs = ipfsAPI({host:'ipfs.infura.io', port:'5001', protocol: 'https'});
-
-        var fileReader = new FileReader()
-        fileReader.readAsArrayBuffer(this.state.file)
-
-        fileReader.onload = function(){
-          var data = fileReader.result
-          var buffer = Buffer.from(data)
-          var content = []
-          content.push({
-            path: filepath,
-            content: buffer
-          })
-
-          console.log(content)
-          ipfs.files.add(content, (err, res) => {
-              console.log(err, res)
-          })
-        }
+		var hash = this.makeid()
+		this.setState({
+			IPFShash: hash
+		})
+        // const filepath = this.state.file.name
+        // const ipfs = ipfsAPI({host:'ipfs.infura.io', port:'5001', protocol: 'https'});
+		//
+        // var fileReader = new FileReader()
+        // fileReader.readAsArrayBuffer(this.state.file)
+		//
+        // fileReader.onload = function(){
+        //   var data = fileReader.result
+        //   var buffer = Buffer.from(data)
+        //   var content = []
+        //   content.push({
+        //     path: filepath,
+        //     content: buffer
+        //   })
+		//
+        //   console.log(content)
+        //   ipfs.files.add(content, (err, res) => {
+        //       console.log(err, res)
+        //   })
+        // }
     }
 
     filterLoans(){
@@ -154,7 +181,7 @@ class LenderMain extends Component {
                     <br/>
                     <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
                     <input type="number" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
-                    <input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />
+                    {/*}<input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />*/}
                     <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
                     <button onClick={() => this.initiateLoan()}>Initiate Loan</button>
             </div>
