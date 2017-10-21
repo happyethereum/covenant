@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import LoanStatus from './constants/loan-status'
 
 const Table  = require('./pure-components/table');
 const ipfsAPI = require('ipfs-api');
@@ -38,13 +39,14 @@ const getLenderMainColumns = (props) => {
     {
         label: 'IPFS Link',
         value: (loan) => {
-            return loan.IPFSHash;
+            return loan.IPFShash;
         }
     },
     {
         label: 'Status',
         value: (loan) => {
-            return loan.status;
+            const status = loan.status || 0;
+            return LoanStatus[status];
         }
     }
 	]

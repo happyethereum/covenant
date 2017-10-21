@@ -7,6 +7,7 @@ contract Loan {
     uint initialBalance;
     uint balance;
     string IPFShash;
+    uint totalAmountRepayed;
     address auditor;
     address[] public whitelist;
 
@@ -54,7 +55,6 @@ contract Loan {
     }
 
 
-
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogRevokeMerchantFromWhitelist(address merchant);
     event LogPayMerchant(address merchant, uint amount);
@@ -96,6 +96,21 @@ contract Loan {
         status=Status.DEFAULT;
         LogStatusChange(status);
         return true;
+    }
+
+    function payBackLender()
+        public
+        payable
+        onlyBorrower
+        returns(bool success) {
+        
+        require(msg.value!=0);
+        uint amount=msg.value;
+        totalAmountRepayed+=amount;
+        lender.transfer(amount);
+        LogAmountRepayed(amount,totalAmountRepayed);
+        return true;
+    
     }
 
     function payMerchant(address merchant, uint amount)

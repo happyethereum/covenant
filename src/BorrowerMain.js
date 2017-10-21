@@ -30,12 +30,6 @@ const getBorrowerMainColumns = (props) => {
 
 			}
 		}
-		// {
-		// 	label: 'IPFS Link',
-		// 	value: (loan) => {
-		// 		return loan.IPFSHash;
-		// 	}
-		// }
 	]
 }
 
