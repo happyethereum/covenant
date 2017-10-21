@@ -1,9 +1,14 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Table = ({ columns = [], data = []}) => {
+const Table = ({ columns = [], data = [], emptyLabel = ''}) => {
 	return (
-		<table className="table">
+	<div>
+		{data.length == 0 && (
+			<p>{emptyLabel}</p>
+		)}
+		{data.length > 0 && (
+			<table className="table">
 			<thead>
 				<tr>
 					{columns.map((col, index) => {
@@ -39,6 +44,8 @@ const Table = ({ columns = [], data = []}) => {
 				})}
 			</tbody>
 		</table>
+		)}
+	</div>
 	);
 };
 
@@ -52,7 +59,8 @@ Table.propTypes = {
 		]).isRequired,
 		action: PropTypes.func,
 		disabled: PropTypes.func
-	}))
+	})),
+	emptyLabel: PropTypes.string
 };
 
 module.exports = Table;

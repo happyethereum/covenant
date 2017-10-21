@@ -5,10 +5,7 @@ class Home extends Component {
   render() {
     return (
       <div>
-      <p onClick={(e) => this.props.functions.changeState(e)}></p>
-      <p>
-      Home {this.props.currentState.value}
-      </p>
+      
       </div>
     );
   }

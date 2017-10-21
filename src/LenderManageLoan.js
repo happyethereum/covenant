@@ -91,9 +91,12 @@ class LenderManageLoan extends Component {
         <div>
             <div>
                 {this.isLoanInDefault() && <button onClick={() => this.killLoan()}>Cancel Loan</button>}
-                <h4>Add A Merchant to the whitelist</h4>
-                <input type="text" onChange={(e) => this.changeMerchant(e)} value={this.state.merchant} placeholder="New merchant address" />
-                <button onClick={() => this.addNewMerchant()}>Add Merchant</button>
+                <h3>Add A Merchant to the whitelist</h3>
+                <div className="form-inline">
+                    <input className="form-control" type="text" onChange={(e) => this.changeMerchant(e)} value={this.state.merchant} placeholder="New merchant address" />
+                    <button className="btn btn-primary" onClick={() => this.addNewMerchant()}>Add Merchant</button>
+                </div>
+
                 <br/>
             </div>
             <Table columns={getLenderManageLoanColumns(this.props, this.state)} data={whitelist} />
