@@ -39,7 +39,7 @@ const getLenderMainColumns = (props) => {
     {
         label: 'IPFS Link',
         value: (loan) => {
-            return loan.IPFSHash;
+            return loan.IPFShash;
         }
     },
     {
