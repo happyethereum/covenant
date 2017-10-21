@@ -57,11 +57,18 @@ class LenderManageLoan extends Component {
     }
 
     killLoan(){
-        const loanInstance = _.find(this.props.currentState.loans, {address: this.props.match.params.address})
-        loanInstance.instance.kill({}, {from: this.props.currentState.userAddress})
+        const loan = this._getLoan()
+        loan.instance.kill({from: loan.lender, gas: 3000000})
         .then(result => {
-            console.log(result)
+            console.log('killLoan', result)
+	        this.props.history.push('/lender')
+        }).catch((err) => {
+            console.error('killLoan',err)
         })
+    }
+
+    _getLoan() {
+	    return _.find(this.props.currentState.loans, {address: this.props.match.params.address})  || {}
     }
 
     getMerchantList(){
@@ -71,6 +78,11 @@ class LenderManageLoan extends Component {
         return merchantList;
     }
 
+    isLoanInDefault() {
+         const loan = this._getLoan();
+         return loan.status == 2;
+    }
+
     render() {
 
       const whitelist = this.getMerchantList();
@@ -78,11 +90,11 @@ class LenderManageLoan extends Component {
       return (
         <div>
             <div>
+                {this.isLoanInDefault() && <button onClick={() => this.killLoan()}>Cancel Loan</button>}
                 <h4>Add A Merchant to the whitelist</h4>
                 <input type="text" onChange={(e) => this.changeMerchant(e)} value={this.state.merchant} placeholder="New merchant address" />
                 <button onClick={() => this.addNewMerchant()}>Add Merchant</button>
                 <br/>
-                <button onClick={() => this.killLoan()}>Kill Loan (loan must be in default)</button>
             </div>
             <Table columns={getLenderManageLoanColumns(this.props, this.state)} data={whitelist} />
       </div>
