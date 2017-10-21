@@ -77,7 +77,8 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender isActive
+        onlyLender 
+        isActive
         returns(bool success)
     {
         require(!whitelistStructs[merchant].isApproved);
