@@ -158,8 +158,8 @@ contract Loan {
         onlyIfInDefault 
         returns (bool success)
     {
-        selfdestruct(lender);
         LogLoanDestroyed(balance);
+        selfdestruct(lender);
         return true;
     }
 }
