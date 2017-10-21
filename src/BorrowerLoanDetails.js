@@ -16,6 +16,7 @@ class BorrowerLoanDetails extends Component {
   componentWillMount(){
     // Currently sync - TODO async
     let balance =  this.props.appContext.web3.eth.getBalance(this.props.match.params.address);
+    console.log(balance);
     this.setState({
       loanBalance: balance.toNumber().toString()
     })
@@ -34,16 +35,17 @@ class BorrowerLoanDetails extends Component {
 
   payMerchant(){
     console.log(this.props.match.params.address);
-    this.props.appContext.loanContract.at(this.props.match.params.address)
-      .then(instance => {
-        console.log(this.state.merchant);
-        console.log(this.props.currentState.userAddress);
-        console.log(this.state.amount);
-        instance.payMerchant(this.state.merchant, this.state.amount, {from: this.props.currentState.userAddress, gas: 4000000})
-          .then(result => {
-              console.log("payMerchant successful: ", result)
-          });
+    this.getLoan().instance.payMerchant(this.state.merchant, this.state.amount, {from: this.props.currentState.userAddress, gas: 4000000})
+      .then(result => {
+          console.log("payMerchant successful: ", result)
       });
+    // this.props.appContext.loanContract.at(this.props.match.params.address)
+    //   .then(instance => {
+    //     console.log(this.state.merchant);
+    //     console.log(this.props.currentState.userAddress);
+    //     console.log(this.state.amount);
+    //
+    //   });
   }
 
   render() {
@@ -52,12 +54,12 @@ class BorrowerLoanDetails extends Component {
     return (
       <div>
         <h2>Loan Details</h2>
-        <h3>Initial Amount: {loan.Amount}</h3>
+        <h3>Initial Amount: {loan.amount.toNumber()}</h3>
         <h3>Current Balance: {this.state.loanBalance}</h3>
         <BorrowerLoanRepayment />
         <div>
-          <select id="merchant" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
-            <option selected disabled>Select merchant</option>
+          <select id="merchant" defaultValue="0" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
+            <option disabled value="0">Select merchant</option>
             {loan.whitelist.map((item, index) => <option key={index} value={item.address}>{item.address}</option>)}
           </select>
           <input id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
