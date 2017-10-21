@@ -14,6 +14,10 @@ class BorrowerLoanDetails extends Component {
   }
 
   componentWillMount(){
+    this.updateBalance();
+  }
+
+  updateBalance(){
     // Currently sync - TODO async
     let balance =  this.props.appContext.web3.eth.getBalance(this.props.match.params.address);
     this.setState({
@@ -35,6 +39,7 @@ class BorrowerLoanDetails extends Component {
   payMerchant(){
     this.getLoan().instance.payMerchant(this.state.merchant, this.state.amount, {from: this.props.currentState.userAddress, gas: 4000000})
       .then(result => {
+          this.updateBalance();
           console.log("payMerchant successful: ", result)
       });
   }
