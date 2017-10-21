@@ -87,7 +87,7 @@ class LenderCreateLoan extends Component {
         <div>
             <p>LenderCreateLoan</p>
             <div>
-                <h4>Create a New Loan</h4>
+                <h3>Create a New Loan</h3>
                     <input type="file" onChange={(e) => this.updateFile(e)}/>
                     <button onClick={this.addFile}>Add File to IPFS</button>
                     <br/>
