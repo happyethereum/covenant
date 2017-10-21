@@ -44,7 +44,8 @@ class App extends Component {
         userAddress: null,
         userAddresses: null,
         loans: [],
-        isReady: false
+        isReady: false,
+	    cancelledLoans: {}
     };
 
   }
@@ -101,6 +102,11 @@ class App extends Component {
               const address = result.args.loan
               const instance =  self.appContext.loanContract.at(address)
 
+	          if (this.state.cancelledLoans[address]) {
+              	// loan is cancelled - don't track it
+              	return;
+              }
+
               var loan = {}
               loan.lender = lender
               loan.borrower = borrower
@@ -134,10 +140,18 @@ class App extends Component {
               console.log('loan destroyed', result)
               const status = result.args.status
 
+	          var loans = _.clone(this.state.loans)
+	          var cancelledLoans = _.clone(this.state.cancelledLoans)
               var loanIndex = _.findIndex(loans, { address: loan.address })
-	          var loans = _.clone(this.state.loans).splice(loanIndex, 1)
-              this.setState({
-                  loans: loans
+	          
+	          // Update state
+	          if (loanIndex >= 0) {
+		          loans.splice(loanIndex, 1);
+              }
+	          cancelledLoans[loan.address] = true;
+	          this.setState({
+                  loans,
+	              cancelledLoans
               })
           }
       })
