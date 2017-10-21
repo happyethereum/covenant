@@ -11,6 +11,7 @@ class AuditorMain extends Component {
 		const loanContracts = _.filter(this.props.currentState.loans, { auditor: curAddress });
 		return (
 			<div>
+				<h3>Loans</h3>
 				<Table data={loanContracts} columns={this.getTableColumnConfig()} emptyLabel="No Loans are associated with this Auditor Account"></Table>
 			</div>
 		);

@@ -1,5 +1,6 @@
 const PropTypes = require('prop-types');
 const React = require('react');
+import './table.css'
 
 const Table = ({ columns = [], data = [], emptyLabel = ''}) => {
 	return (
