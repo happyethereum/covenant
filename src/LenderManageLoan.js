@@ -50,7 +50,7 @@ class LenderManageLoan extends Component {
         const merchant = this.state.merchant
         const loanInstance = _.find(this.props.currentState.loans, {address: this.props.match.params.address})
         console.log(loanInstance)
-        loanInstance.instance.addMerchantToWhitelist(merchant, {from: this.props.currentState.userAddress})
+        loanInstance.instance.addMerchantToWhitelist(merchant, {from: this.props.currentState.userAddress, gas: 4000000})
         .then(result => {
             console.log(result)
         })
