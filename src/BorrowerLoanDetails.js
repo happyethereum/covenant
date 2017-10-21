@@ -60,6 +60,14 @@ class BorrowerLoanDetails extends Component {
           <input id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
           <button type="button" onClick={() => this.payMerchant()}>Pay merchant</button>
         </div>
+        <div>
+          <h3>Payments to Merchants</h3>
+          <ul>
+            {loan.payments.map((item, index) => <li key={index}>
+              To: {item.address} - Paid: {item.amount.toNumber()} wei
+            </li>)}
+          </ul>
+        </div>
       </div>
     );
   }

@@ -116,6 +116,7 @@ class App extends Component {
               loan.address = address
               loan.whitelist = []
               loan.instance = instance
+              loan.payments = []
 
               var loans = this.state.loans;
               loans.push(loan)
@@ -126,6 +127,7 @@ class App extends Component {
               this.watchForStatusChange(loan)
               this.watchForWhitelistChange(loan)
               this.watchForLoanDestroyed(loan)
+              this.watchForPaymentMade(loan)
           }
       })
   }
@@ -143,7 +145,7 @@ class App extends Component {
 	          var loans = _.clone(this.state.loans)
 	          var cancelledLoans = _.clone(this.state.cancelledLoans)
               var loanIndex = _.findIndex(loans, { address: loan.address })
-	          
+
 	          // Update state
 	          if (loanIndex >= 0) {
 		          loans.splice(loanIndex, 1);
@@ -182,6 +184,29 @@ class App extends Component {
 			})
 	}
 
+  watchForPaymentMade(loan){
+    loan.instance.LogPayMerchant({}, {fromBlock: 0})
+    .watch((err, result) => {
+        if(err){
+            console.log(err)
+            return
+        } else {
+            console.log('payment made', result)
+            const merchant = result.args.merchant;
+            const amount = result.args.amount;
+            const currentBalance = result.args.currentBalance;
+
+            var loans = _.clone(this.state.loans)
+            var curLoan = _.find(loans, { address: loan.address })
+
+            curLoan.payments.push({address: merchant, amount: amount});
+            this.setState({
+                loans: loans
+            })
+        }
+    })
+  }
+
   watchForWhitelistChange(loan){
       loan.instance.LogMerchantAddedToWhitelist({}, {fromBlock: 0})
       .watch((err, result) => {
@@ -201,7 +226,7 @@ class App extends Component {
           }
       })
   }
-  
+
   render() {
 
     var functions = {
