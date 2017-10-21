@@ -35,8 +35,8 @@ class LenderManageLoan extends Component {
       super(props)
 
       this.state = {
-          loanAddress: this.props.match.params.address
-
+          loanAddress: this.props.match.params.address,
+          merchant:''
       };
     }
 
@@ -48,14 +48,17 @@ class LenderManageLoan extends Component {
 
     addNewMerchant(){
         const merchant = this.state.merchant
-        this.state.loanInstance.addMerchantToWhitelist(merchant, {from: this.props.currentState.userAddress})
+        const loanInstance = _.find(this.props.currentState.loans, {address: this.props.match.params.address})
+        console.log(loanInstance)
+        loanInstance.instance.addMerchantToWhitelist(merchant, {from: this.props.currentState.userAddress})
         .then(result => {
             console.log(result)
         })
     }
 
     killLoan(){
-        this.state.loanInstance.kill({}, {from: this.props.currentState.userAddress})
+        const loanInstance = _.find(this.props.currentState.loans, {address: this.props.match.params.address})
+        loanInstance.instance.kill({}, {from: this.props.currentState.userAddress})
         .then(result => {
             console.log(result)
         })
