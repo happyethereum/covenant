@@ -20,7 +20,7 @@ const getLenderManageLoanColumns = (props, state) => {
         },
         action: (merchant) => {
             co(function*() {
-                yield loan.instance.revokeMerchant({ from: loan.lender, gas:3000000 });
+                yield loan.instance.revokeMerchant(merchant.address, { from: loan.lender, gas:3000000 });
             })
         }
     },

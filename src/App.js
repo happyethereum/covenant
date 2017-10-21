@@ -143,7 +143,7 @@ class App extends Component {
 	          var loans = _.clone(this.state.loans)
 	          var cancelledLoans = _.clone(this.state.cancelledLoans)
               var loanIndex = _.findIndex(loans, { address: loan.address })
-	          
+
 	          // Update state
 	          if (loanIndex >= 0) {
 		          loans.splice(loanIndex, 1);
@@ -189,7 +189,7 @@ class App extends Component {
               console.log(err)
               return
           } else {
-              console.log('whitelist change', result)
+              console.log('merchant added to whitelist', result)
               const newApprovedAddress = result.args.merchant
 
               var loans = _.clone(this.state.loans)
@@ -200,8 +200,28 @@ class App extends Component {
               })
           }
       })
+
+      loan.instance.LogRevokeMerchantFromWhitelist({}, {fromBlock: 0})
+      .watch((err, result) => {
+          if(err) {
+              console.log(err)
+              return
+          } else {
+              console.log('merchant removed from whitelist', result)
+              const removedAddress = result.args.merchant
+
+              var loans = _.clone(this.state.loans)
+              var curLoan = _.find(loans, {address: loan.address})
+              curLoan.whitelist = _.remove(curLoan.whitelist, function(n){
+                  return n == removedAddress
+              })
+              this.setState({
+                  loans:loans
+              })
+          }
+      })
   }
-  
+
   render() {
 
     var functions = {
