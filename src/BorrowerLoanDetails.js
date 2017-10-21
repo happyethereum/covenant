@@ -29,6 +29,7 @@ class BorrowerLoanDetails extends Component {
       .then(instance => {
         console.log(this.state.merchant);
         console.log(this.props.currentState.userAddress);
+        console.log(this.state.amount);
         instance.payMerchant(this.state.merchant, this.state.amount, {from: this.props.currentState.userAddress, gas: 4000000})
           .then(result => {
               console.log("payMerchant successful: ", result)
@@ -41,7 +42,8 @@ class BorrowerLoanDetails extends Component {
     console.log(loan);
     return (
       <div>
-        <h2>Loan Details</h2>
+        <h2>Loan Details - Amount: {loan.Amount}</h2>
+
         <BorrowerLoanRepayment />
         <div>
           <select id="merchant" value={this.state.merchant} onChange={(e) => this.onChange(e)}>

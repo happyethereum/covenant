@@ -28,7 +28,7 @@ contract Loan {
         require(status==Status.PENDING);
         _;
     }
-    
+
     modifier onlyLender(){
         require(msg.sender == lender);
         _;
@@ -45,7 +45,7 @@ contract Loan {
     }
 
     modifier isOnWhitelist(address merchant){
-        require(whitelistStructs[merchant].isApproved == true);
+        require(whitelistStructs[merchant].isApproved);
         _;
     }
 
@@ -77,7 +77,7 @@ contract Loan {
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender isActive 
+        onlyLender isActive
         returns(bool success)
     {
         require(whitelistStructs[merchant].isApproved != true);
@@ -89,8 +89,8 @@ contract Loan {
     }
 
     function setLoanInDefault()
-        onlyAuditor 
-        isActive 
+        onlyAuditor
+        isActive
         returns(bool success)
     {
         status=Status.DEFAULT;
@@ -103,25 +103,25 @@ contract Loan {
         payable
         onlyBorrower
         returns(bool success) {
-        
+
         require(msg.value!=0);
         uint amount=msg.value;
         totalAmountRepayed+=amount;
         lender.transfer(amount);
         LogAmountRepayed(amount,totalAmountRepayed);
         return true;
-    
+
     }
 
     function payMerchant(address merchant, uint amount)
-        onlyBorrower 
-        isOnWhitelist(merchant) 
+        onlyBorrower
+        isOnWhitelist(merchant)
         isActive
         returns(bool success)
     {
         require(amount<=balance);
-        balance -= amount;
         merchant.transfer(amount);
+        balance -= amount;
         LogPayMerchant(merchant, amount);
         return true;
     }
@@ -137,7 +137,7 @@ contract Loan {
     }
 
     function revokeMerchant(address merchant)
-        onlyLender 
+        onlyLender
         isActive
         returns(bool success)
     {
@@ -155,7 +155,7 @@ contract Loan {
 
     function kill()
         onlyLender
-        onlyIfInDefault 
+        onlyIfInDefault
         returns (bool success)
     {
         selfdestruct(lender);
