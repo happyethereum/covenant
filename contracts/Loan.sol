@@ -57,7 +57,7 @@ contract Loan {
 
     event LogMerchantAddedToWhitelist(address sender, address merchant);
     event LogRevokeMerchantFromWhitelist(address merchant);
-    event LogPayMerchant(address merchant, uint amount);
+    event LogPayMerchant(address merchant, uint amount, uint currentBalance);
     event LogLoanDestroyed(uint amountReturned);
     event LogStatusChange(Status status);
     event LogAmountRepayed(uint amount, uint totalAmountRepayed);
@@ -65,19 +65,20 @@ contract Loan {
     function Loan(
                 address _lender,
                 address _borrower,
-                uint amount,
                 string _IPFShash,
-                address _auditor) public{
+                address _auditor)
+                payable
+                public{
         lender = _lender;
         borrower = _borrower;
-        balance = amount;
-        initialBalance = amount;
+        balance = msg.value;
+        initialBalance = balance;
         IPFShash = _IPFShash;
         auditor = _auditor;
     }
 
     function addMerchantToWhitelist(address merchant)
-        onlyLender 
+        onlyLender
         isActive
         returns(bool success)
     {
@@ -123,7 +124,7 @@ contract Loan {
         require(amount<=balance);
         merchant.transfer(amount);
         balance -= amount;
-        LogPayMerchant(merchant, amount);
+        LogPayMerchant(merchant, amount, balance);
         return true;
     }
 
@@ -143,7 +144,7 @@ contract Loan {
         isOnWhitelist(merchant)
         returns(bool success)
     {
-        
+
         whitelistStructs[merchant].isApproved = false;
 
         uint rowToDelete= whitelistStructs[merchant].index;
@@ -164,4 +165,5 @@ contract Loan {
         selfdestruct(lender);
         return true;
     }
+
 }
