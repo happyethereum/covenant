@@ -163,12 +163,7 @@ class App extends Component {
           }
       })
   }
-
-  changeState(e){
-    // update state
-    console.log(e);
-  }
-
+  
   render() {
 
     var functions = {

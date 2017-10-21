@@ -8,8 +8,17 @@ class BorrowerLoanDetails extends Component {
 
     this.state = {
       amount: 0,
-      merchant: ''
+      merchant: '',
+      loanBalance: ''
     };
+  }
+
+  componentWillMount(){
+    // Currently sync - TODO async
+    let balance =  this.props.appContext.web3.eth.getBalance(this.props.match.params.address);
+    this.setState({
+      loanBalance: balance.toNumber().toString()
+    })
   }
 
   getLoan(){
@@ -42,11 +51,13 @@ class BorrowerLoanDetails extends Component {
     console.log(loan);
     return (
       <div>
-        <h2>Loan Details - Amount: {loan.Amount}</h2>
-
+        <h2>Loan Details</h2>
+        <h3>Initial Amount: {loan.Amount}</h3>
+        <h3>Current Balance: {this.state.loanBalance}</h3>
         <BorrowerLoanRepayment />
         <div>
           <select id="merchant" value={this.state.merchant} onChange={(e) => this.onChange(e)}>
+            <option selected disabled>Select merchant</option>
             {loan.whitelist.map((item, index) => <option key={index} value={item.address}>{item.address}</option>)}
           </select>
           <input id="amount" type="number" value={this.state.amount} onChange={(e) => this.onChange(e)}></input>
