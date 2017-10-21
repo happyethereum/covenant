@@ -165,6 +165,11 @@ class App extends Component {
 					return
 				} else {
 					console.log('status change', result)
+					if (this.state.cancelledLoans[loan.address]) {
+						// loan is cancelled - don't track it
+						return;
+					}
+
 					const status = result.args.status
 
 					var loans = _.clone(this.state.loans)
@@ -210,6 +215,7 @@ class App extends Component {
                       <NavBar></NavBar>
                       { this.state.isReady && (
                           <div>
+	                          <h3>Select Your Account:</h3>
                               <ChooseAccount accounts={this.state.userAddresses}
                                              selectedAccount={this.state.userAddress}
                                              onSelect={(a) => this.setState({userAddress: a})}>

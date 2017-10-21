@@ -173,19 +173,24 @@ class LenderMain extends Component {
 
       return (
         <div>
-            <p>LenderMain</p>
             <div>
-                <h4>Create a New Loan</h4>
-                    <input type="file" onChange={(e) => this.updateFile(e)}/>
-                    <button onClick={this.addFile.bind(this)}>Add File to IPFS</button>
+                <h3>Create a New Loan</h3>
+                <div className="form-group">
+                    <label className="btn btn-default">
+                        <span className="text-primary" style={{cursor: 'pointer'}}>Choose File</span> <input type="file" onChange={(e) => this.updateFile(e)} hidden/>
+                    </label>
+
+                    <button className="btn btn-default" onClick={this.addFile.bind(this)}>Add File to IPFS</button>
                     <br/>
-                    <input type="text" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
-                    <input type="number" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
-                    {/*}<input type="text" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />*/}
-                    <input type="text" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
-                    <button onClick={() => this.initiateLoan()}>Initiate Loan</button>
+                    <input type="text" className="form-control" onChange={(e) => this.updateBorrower(e)} value={this.state.borrower} placeholder="Borrower Address" />
+                    <input type="number" className="form-control" onChange={(e) => this.updateAmount(e)} value={this.state.amount} placeholder="Loan Amount" />
+                    {/*}<input type="text" className="form-control" onChange={(e) => this.updateIPFShash(e)} value={this.state.IPFShash} placeholder="IPFShash" />*/}
+                    <input type="text" className="form-control" onChange={(e) => this.updateAuditor(e)} value={this.state.auditor} placeholder="Auditor Address" />
+                    <button className="btn btn-primary" onClick={() => this.initiateLoan()}>Initiate Loan</button>
+                </div>
             </div>
-            <Table columns={getLenderMainColumns(this.props)} data={loans} />
+            <h3>Current Loans</h3>
+            <Table columns={getLenderMainColumns(this.props)} data={loans} emptyLabel="No Loans are associated with this Lender Account" />
          </div>
       );
     }

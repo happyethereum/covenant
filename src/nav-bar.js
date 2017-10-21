@@ -8,7 +8,7 @@ const NavBar = (props) => {
 	return (
 		<div>
 		<nav className="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
-			<a className="navbar-brand" href="#">Road Network</a>
+			<a className="navbar-brand" href="#">Happy Loans</a>
 			<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 				<span className="navbar-toggler-icon"></span>
 			</button>
